@@ -1,0 +1,7 @@
+name: Redhook
+version: '1.0-SNAPSHOT'
+main: io.github.n1ck145.redhook.RedhookPlugin
+api-version: '1.21'
+prefix: 'Redhook'
+authors: [ n1ck145, hoeckelberg ]
+description: Customizable webhook requests based on Redstone state changes.
