@@ -5,3 +5,7 @@ api-version: '1.21'
 prefix: 'Redhook'
 authors: [ n1ck145, hoeckelberg ]
 description: Customizable webhook requests based on Redstone state changes.
+commands:
+  redhook:
+    description: Main command to interact with webhooks
+    usage: /redhook
