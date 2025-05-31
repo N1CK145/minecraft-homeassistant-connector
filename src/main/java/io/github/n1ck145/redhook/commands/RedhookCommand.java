@@ -57,14 +57,32 @@ public class RedhookCommand implements CommandExecutor {
         }
 
         if (args.length == 0 || args[0].equalsIgnoreCase("wand")) {
-            player.getInventory().addItem(wand.clone());
-            player.sendMessage(RedhookPlugin.getPrefix() + "§aYou received the §dRedhook Wand§a!");
+            if (player.hasPermission("redhook.wand")) {
+                player.getInventory().addItem(wand.clone());
+                player.sendMessage(RedhookPlugin.getPrefix() + "§aYou received the §dRedhook Wand§a!");
+            } else {
+                player.sendMessage(RedhookPlugin.getPrefix() + "§cYou don't have permission to use this command.");
+            }
             return true;
         }
 
         if (args.length == 0 || args[0].equalsIgnoreCase("debug")) {
-            player.getInventory().addItem(debug.clone());
-            player.sendMessage(RedhookPlugin.getPrefix() + "§aYou received the §dRedhook Debug Stick§a!");
+            if (player.hasPermission("redhook.debug")) {
+                player.getInventory().addItem(debug.clone());
+                player.sendMessage(RedhookPlugin.getPrefix() + "§aYou received the §dRedhook Debug Stick§a!");
+            } else {
+                player.sendMessage(RedhookPlugin.getPrefix() + "§cYou don't have permission to use this command.");
+            }
+            return true;
+        }
+
+        if (args.length == 0 || args[0].equalsIgnoreCase("reload")) {
+            if (player.hasPermission("redhook.reload")) {
+                RedhookPlugin.getInstance().reloadConfigs();
+                player.sendMessage(RedhookPlugin.getPrefix() + "§aPlugin reloaded!");
+            } else {
+                player.sendMessage(RedhookPlugin.getPrefix() + "§cYou don't have permission to use this command.");
+            }
             return true;
         }
 

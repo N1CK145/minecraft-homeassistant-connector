@@ -106,4 +106,8 @@ public class RedstoneLinkManager {
             bindingsConfig.saveBindings(bindings);
         }
     }
+
+    public static void clear() {
+        bindings.clear();
+    }
 }
