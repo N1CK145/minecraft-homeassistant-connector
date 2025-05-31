@@ -18,17 +18,22 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import io.github.n1ck145.redhook.RedhookPlugin;
 import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
 
 public class ActionTriggerMenu implements Menu {
     private final Player player;
     private final Block selectedBlock;
     private final RedstoneAction action;
+    private final RedstoneActionInstance currentActionInstance;
 
     public ActionTriggerMenu(Player player, Block selectedBlock, RedstoneAction action) {
         this.player = player;
         this.selectedBlock = selectedBlock;
         this.action = action;
+        
+        ArrayList<RedstoneActionInstance> actionInstances = RedstoneLinkManager.getActionInstances(selectedBlock);
+        currentActionInstance = actionInstances == null ? null : actionInstances.stream().filter(instance -> instance.getAction().equals(action)).findFirst().orElse(null);
     }
 
     public void open() {
@@ -63,18 +68,15 @@ public class ActionTriggerMenu implements Menu {
     }
 
     private void setIndicators(Inventory inv){
-        ArrayList<RedstoneActionInstance> actionInstances = RedstoneLinkManager.getActionInstances(selectedBlock);
-        RedstoneActionInstance actionInstance = actionInstances == null ? null : actionInstances.stream().filter(instance -> instance.getAction().equals(action)).findFirst().orElse(null);
-
         boolean[] states = new boolean[4];
 
-        if(actionInstance == null){
+        if(currentActionInstance == null){
             states[0] = false;
             states[1] = false;
             states[2] = false;
             states[3] = true;
         }else{
-            TriggerCondition trigger = actionInstance.getTriggerCondition();
+            TriggerCondition trigger = currentActionInstance.getTriggerCondition();
             states[0] = trigger == TriggerCondition.ON;
             states[1] = trigger == TriggerCondition.OFF;
             states[2] = trigger == TriggerCondition.BOTH;
@@ -113,8 +115,14 @@ public class ActionTriggerMenu implements Menu {
             case 9 + 3 -> trigger = TriggerCondition.OFF;
             case 9 + 5 -> trigger = TriggerCondition.BOTH;
             case 9 + 7 -> {
+                if(currentActionInstance == null){
+                    player.sendMessage(RedhookPlugin.getPrefix() + "§cNo action bound to this block");
+                    player.playNote(player.getLocation(), Instrument.BASS_GUITAR, Note.natural(0, Note.Tone.C));
+                    return;
+                }
+
                 RedstoneLinkManager.unbindBlock(selectedBlock.getLocation(), action);
-                player.sendMessage("§aUnbound action §7" + action.getId());
+                player.sendMessage(RedhookPlugin.getPrefix() + "§aUnbound action §7" + action.getId());
                 player.playNote(player.getLocation(), Instrument.PLING, Note.natural(1, Note.Tone.C));
                 player.closeInventory();
                 return;

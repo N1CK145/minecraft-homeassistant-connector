@@ -1,7 +1,6 @@
 package io.github.n1ck145.redhook;
 
 import io.github.n1ck145.redhook.commands.RedhookCommand;
-import io.github.n1ck145.redhook.config.ActionsConfig;
 import io.github.n1ck145.redhook.config.ConfigManager;
 import io.github.n1ck145.redhook.listeners.BlockBreakListener;
 import io.github.n1ck145.redhook.listeners.InventoryClickListener;
@@ -10,13 +9,14 @@ import io.github.n1ck145.redhook.listeners.RedstonePowerChangeListener;
 import io.github.n1ck145.redhook.manager.ActionFactory;
 import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
 import io.github.n1ck145.redhook.redstoneactions.PlayerMessageAction;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-
 public final class RedhookPlugin extends JavaPlugin {
+
+    public static String getPrefix(){
+        return "§8[§4Red§cHook§8] §r";
+    }
+
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -48,7 +48,7 @@ public final class RedhookPlugin extends JavaPlugin {
 
     private void registerActions() {
         this.getLogger().info("Register actions...");
-
+        
         ActionFactory.register("PlayerMessageAction", PlayerMessageAction::deserialize);
     }
 

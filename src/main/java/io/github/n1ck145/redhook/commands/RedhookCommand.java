@@ -10,14 +10,30 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import io.github.n1ck145.redhook.RedhookPlugin;
+
 import java.util.List;
 
 public class RedhookCommand implements CommandExecutor {
     private final ItemStack wand;
+    private final ItemStack debug;
 
     public RedhookCommand() {
-        // Prepare the wand item once
         this.wand = createWandItem();
+        this.debug = createDebugItem();
+    }
+
+    private ItemStack createDebugItem() {
+        ItemStack item = new ItemStack(Material.BRUSH);
+        ItemMeta meta = item.getItemMeta();
+
+        NamespacedKey key = new NamespacedKey("redhook", "debug");
+        meta.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte) 1);
+
+        meta.setDisplayName("§cRedhook Debug Stick");
+        meta.setLore(List.of("§7Use this to debug redstone actions", "§8(Right-click or break a block)"));
+        item.setItemMeta(meta);
+        return item;
     }
 
     private ItemStack createWandItem() {
@@ -42,11 +58,17 @@ public class RedhookCommand implements CommandExecutor {
 
         if (args.length == 0 || args[0].equalsIgnoreCase("wand")) {
             player.getInventory().addItem(wand.clone());
-            player.sendMessage("§aYou received the §dRedhook Wand§a!");
+            player.sendMessage(RedhookPlugin.getPrefix() + "§aYou received the §dRedhook Wand§a!");
             return true;
         }
 
-        player.sendMessage("§cUnknown subcommand. Try §e/redhook wand");
+        if (args.length == 0 || args[0].equalsIgnoreCase("debug")) {
+            player.getInventory().addItem(debug.clone());
+            player.sendMessage(RedhookPlugin.getPrefix() + "§aYou received the §dRedhook Debug Stick§a!");
+            return true;
+        }
+
+        player.sendMessage(RedhookPlugin.getPrefix() + "§cUnknown subcommand. Try §e/redhook wand");
         return true;
     }
 }

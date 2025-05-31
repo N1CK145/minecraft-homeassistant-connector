@@ -1,34 +1,39 @@
 package io.github.n1ck145.redhook.redstoneactions;
 
 import io.github.n1ck145.redhook.utils.ActionDeserializer;
+import io.github.n1ck145.redhook.utils.ColorMapper;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class PlayerMessageAction implements RedstoneAction {
     private static final String name = "PlayerMessageAction";
-
     private final String message;
-    private final UUID targetPlayerUUID; // nullable
+    private final String targetPlayerName; // nullable
     private final String id;
+    private final String label;
+    private String[] description;
 
-    public PlayerMessageAction(String id, String message, UUID targetPlayerUUID) {
+    public PlayerMessageAction(String id, String message, String targetPlayerName, String label, String[] description) {
         this.id = id;
         this.message = message;
-        this.targetPlayerUUID = targetPlayerUUID;
+        this.targetPlayerName = targetPlayerName;
+        this.label = label;
+        this.description = description;
     }
 
     @Override
     public void execute(Player trigger) {
-        if (targetPlayerUUID != null) {
-            Player target = Bukkit.getPlayer(targetPlayerUUID);
+        if (targetPlayerName != null) {
+            Player target = Bukkit.getPlayer(targetPlayerName);
             if (target != null && target.isOnline()) {
                 target.sendMessage("§e[Action] §r" + message);
             } else {
@@ -41,8 +46,8 @@ public class PlayerMessageAction implements RedstoneAction {
 
     @Override
     public ItemStack getIcon() {
-        String title = targetPlayerUUID == null ? "§bBroadcast Message" : "§aMessage Player";
-        String lore = "§7\"" + message + "\"";
+        String title = ColorMapper.map(label);
+        String[] lore = Arrays.stream(description).map(ColorMapper::map).toArray(String[]::new);
         return createItem(Material.PAPER, title, lore);
     }
 
@@ -63,10 +68,15 @@ public class PlayerMessageAction implements RedstoneAction {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
+        
         map.put("id", id);
-        map.put("type", "PlayerMessageAction");
+        map.put("type", name);
+        map.put("label", label);
+        map.put("description", description);
+
         map.put("message", message);
-        map.put("target", targetPlayerUUID == null ? null : targetPlayerUUID.toString());
+        map.put("target", targetPlayerName == null ? null : targetPlayerName);
+
         return map;
     }
 
@@ -74,22 +84,27 @@ public class PlayerMessageAction implements RedstoneAction {
         String id = (String) map.get("id");
         String message = (String) map.get("message");
         String targetStr = (String) map.get("target");
-        UUID target = null;
+        String label = (String) map.get("label");
+        ArrayList<String> description = (ArrayList<String>) map.get("description");
 
-        if (targetStr != null && !targetStr.equalsIgnoreCase("null")) {
-            try {
-                target = UUID.fromString(targetStr);
-            } catch (IllegalArgumentException e) {
-                // log warning if needed
-            }
-        }
+        String[] descriptionArray = description == null ? new String[0] : description.toArray(new String[0]);
 
-        return new PlayerMessageAction(id, message, target);
+        return new PlayerMessageAction(id, message, targetStr, label, descriptionArray);
     }
 
     @Override
     public String getName(){
         return name;
+    }
+
+    @Override
+    public String getLabel() {
+        return label;
+    }
+
+    @Override
+    public String[] getDescription() {
+        return description;
     }
 }
 

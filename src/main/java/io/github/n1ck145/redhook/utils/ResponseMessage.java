@@ -2,6 +2,8 @@ package io.github.n1ck145.redhook.utils;
 
 import org.bukkit.entity.Player;
 
+import io.github.n1ck145.redhook.RedhookPlugin;
+
 public class ResponseMessage {
     private final String message;
     private final boolean success;
@@ -12,7 +14,7 @@ public class ResponseMessage {
     }
 
     public void send(Player player){
-        player.sendMessage(message);
+        player.sendMessage(RedhookPlugin.getPrefix() + message);
     }
     
     public static ResponseMessage of(String message, boolean success){
