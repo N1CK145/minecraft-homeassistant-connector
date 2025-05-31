@@ -1,40 +1,57 @@
 package io.github.n1ck145.redhook;
 
-import io.github.n1ck145.redhook.commands.CommandManager;
-import io.github.n1ck145.redhook.inventories.WebhookSelectorInventory;
-import io.github.n1ck145.redhook.inventories.WebhookSelectorPoweredInventory;
-import io.github.n1ck145.redhook.inventories.WebhookSelectorUnpoweredInventory;
-import io.github.n1ck145.redhook.inventories.WebhookSelectorViewerInventory;
-import io.github.n1ck145.redhook.listeners.BindBlockToWebhookListener;
+import io.github.n1ck145.redhook.commands.RedhookCommand;
+import io.github.n1ck145.redhook.config.ActionsConfig;
+import io.github.n1ck145.redhook.config.ConfigManager;
+import io.github.n1ck145.redhook.listeners.BlockBreakListener;
 import io.github.n1ck145.redhook.listeners.InventoryClickListener;
+import io.github.n1ck145.redhook.listeners.RedstoneBindListener;
 import io.github.n1ck145.redhook.listeners.RedstonePowerChangeListener;
+import io.github.n1ck145.redhook.manager.ActionFactory;
+import io.github.n1ck145.redhook.redstoneactions.PlayerMessageAction;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class RedhookPlugin extends JavaPlugin {
+import java.io.File;
 
+public final class RedhookPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
-        RegisterEvents();
+        registerEvents();
+        registerActions();
+        loadConfigs();
 
-        this.getCommand("redhook").setExecutor(new CommandManager());
+        this.getCommand("redhook").setExecutor(new RedhookCommand());
 
-        System.out.println("Enabled!");
+        this.getLogger().info("Enabled!");
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        System.out.println("Disabled!");
+        this.getLogger().info("Disabled!");
     }
 
-    private void RegisterEvents() {
-        getServer().getPluginManager().registerEvents(WebhookSelectorPoweredInventory.GetInstance(), this);
-        getServer().getPluginManager().registerEvents(WebhookSelectorUnpoweredInventory.GetInstance(), this);
-        getServer().getPluginManager().registerEvents(WebhookSelectorViewerInventory.GetInstance(), this);
+    private void registerEvents() {
+        this.getLogger().info("Register events...");
 
         getServer().getPluginManager().registerEvents(new RedstonePowerChangeListener(), this);
         getServer().getPluginManager().registerEvents(new InventoryClickListener(), this);
-        getServer().getPluginManager().registerEvents(new BindBlockToWebhookListener(), this);
+        getServer().getPluginManager().registerEvents(new RedstoneBindListener(), this);
+        getServer().getPluginManager().registerEvents(new BlockBreakListener(), this);
+    }
+
+    private void registerActions() {
+        this.getLogger().info("Register actions...");
+
+        ActionFactory.register("PlayerMessageAction", PlayerMessageAction::deserialize);
+    }
+
+    private void loadConfigs(){
+        ConfigManager configManager = new ConfigManager(this);
+
+        configManager.getActionsConfig().loadActions();
     }
 }
