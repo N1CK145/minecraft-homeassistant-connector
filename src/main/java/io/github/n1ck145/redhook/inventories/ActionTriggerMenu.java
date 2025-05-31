@@ -1,9 +1,16 @@
 package io.github.n1ck145.redhook.inventories;
 
 import io.github.n1ck145.redhook.redstoneactions.RedstoneAction;
+import io.github.n1ck145.redhook.redstoneactions.RedstoneActionInstance;
 import io.github.n1ck145.redhook.redstoneactions.TriggerCondition;
+import io.github.n1ck145.redhook.utils.ResponseMessage;
+
+import java.util.ArrayList;
+
 import org.bukkit.Bukkit;
+import org.bukkit.Instrument;
 import org.bukkit.Material;
+import org.bukkit.Note;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -25,14 +32,62 @@ public class ActionTriggerMenu implements Menu {
     }
 
     public void open() {
-        System.out.println("Open");
-        Inventory inv = Bukkit.createInventory(null, 9, "§6Select Trigger");
+        Inventory inv = Bukkit.createInventory(null, 9 * 3, "§6Select Trigger");
 
-        inv.setItem(2, createButton(Material.REDSTONE_TORCH, "§aON"));
-        inv.setItem(4, createButton(Material.LEVER, "§aOFF"));
-        inv.setItem(6, createButton(Material.REDSTONE_BLOCK, "§aBOTH"));
+        setBackground(inv);
+        setNavigation(inv);
+        setActions(inv);
+        setIndicators(inv);
 
         player.openInventory(inv);
+    }
+
+    private void setBackground(Inventory inv){
+        for(int i = 0; i < inv.getSize(); i++){
+            if(inv.getItem(i) == null){
+                inv.setItem(i, createButton(Material.GRAY_STAINED_GLASS_PANE, "§7"));
+            }
+        }
+    }
+
+    private void setNavigation(Inventory inv){
+        inv.setItem(0, createButton(Material.ARROW, "§cBack"));
+        inv.setItem(8, createButton(Material.NAME_TAG, "§e" + action.getId()));
+    }
+
+    private void setActions(Inventory inv){
+        inv.setItem(9 + 1, createButton(Material.REDSTONE_TORCH, "§aON"));
+        inv.setItem(9 + 3, createButton(Material.LEVER, "§aOFF"));
+        inv.setItem(9 + 5, createButton(Material.REDSTONE_BLOCK, "§aBOTH"));
+        inv.setItem(9 + 7, createButton(Material.BARRIER, "§4DISABLED"));
+    }
+
+    private void setIndicators(Inventory inv){
+        ArrayList<RedstoneActionInstance> actionInstances = RedstoneLinkManager.getActionInstances(selectedBlock);
+        RedstoneActionInstance actionInstance = actionInstances == null ? null : actionInstances.stream().filter(instance -> instance.getAction().equals(action)).findFirst().orElse(null);
+
+        boolean[] states = new boolean[4];
+
+        if(actionInstance == null){
+            states[0] = false;
+            states[1] = false;
+            states[2] = false;
+            states[3] = true;
+        }else{
+            TriggerCondition trigger = actionInstance.getTriggerCondition();
+            states[0] = trigger == TriggerCondition.ON;
+            states[1] = trigger == TriggerCondition.OFF;
+            states[2] = trigger == TriggerCondition.BOTH;
+            states[3] = false;
+        }
+
+        for(int i = 0; i < states.length; i++){
+            if(states[i]){
+                inv.setItem(19 + (2 * i), createButton(Material.GREEN_STAINED_GLASS_PANE, "§aON"));
+            }else{
+                inv.setItem(19 + (2 * i), createButton(Material.RED_STAINED_GLASS_PANE, "§cOFF"));
+            }
+        }
     }
 
     private ItemStack createButton(Material mat, String name) {
@@ -46,7 +101,6 @@ public class ActionTriggerMenu implements Menu {
     }
 
     public void handleClick(InventoryClickEvent event) {
-        System.out.println("Click");
 
         if (!event.getView().getTitle().equals("§6Select Trigger")) return;
         event.setCancelled(true);
@@ -55,18 +109,31 @@ public class ActionTriggerMenu implements Menu {
         TriggerCondition trigger;
 
         switch (slot) {
-            case 2 -> trigger = TriggerCondition.ON;
-            case 4 -> trigger = TriggerCondition.OFF;
-            case 6 -> trigger = TriggerCondition.BOTH;
+            case 9 + 1 -> trigger = TriggerCondition.ON;
+            case 9 + 3 -> trigger = TriggerCondition.OFF;
+            case 9 + 5 -> trigger = TriggerCondition.BOTH;
+            case 9 + 7 -> {
+                RedstoneLinkManager.unbindBlock(selectedBlock.getLocation(), action);
+                player.sendMessage("§aUnbound action §7" + action.getId());
+                player.playNote(player.getLocation(), Instrument.PLING, Note.natural(1, Note.Tone.C));
+                player.closeInventory();
+                return;
+            }
             default -> {
                 return;
             }
         }
 
         // Bind with trigger
-        RedstoneLinkManager.bindBlock(selectedBlock, action, trigger);
-
-        player.sendMessage("§aBound action §e" + action.getName() + " §awith trigger §e" + trigger + " §ato block at §e" + selectedBlock.getLocation());
-        player.closeInventory();
+        ResponseMessage response = RedstoneLinkManager.bindBlock(selectedBlock, action, trigger);
+        if(!response.isSuccess()){
+            response.send(player);
+            player.playNote(player.getLocation(), Instrument.BASS_GUITAR, Note.natural(0, Note.Tone.C));
+        }
+        else{
+            response.send(player);
+            player.playNote(player.getLocation(), Instrument.PLING, Note.natural(1, Note.Tone.C));
+            player.closeInventory();
+        }
     }
 }

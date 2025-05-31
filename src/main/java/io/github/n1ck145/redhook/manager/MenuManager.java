@@ -37,7 +37,6 @@ public class MenuManager {
      * Unregisters the menu when the inventory is closed.
      */
     public static void handleClose(InventoryCloseEvent event) {
-        System.out.println(event.getInventory().getSize());
         if (!(event.getPlayer() instanceof Player player)) return;
         openMenus.remove(player.getUniqueId());
     }

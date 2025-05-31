@@ -17,4 +17,13 @@ public class RedstoneActionInstance {
     public TriggerCondition getTriggerCondition() {
         return triggerCondition;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof RedstoneActionInstance){
+            RedstoneActionInstance other = (RedstoneActionInstance) obj;
+            return action.equals(other.action) && triggerCondition.equals(other.triggerCondition);
+        }
+        return false;
+    }
 }

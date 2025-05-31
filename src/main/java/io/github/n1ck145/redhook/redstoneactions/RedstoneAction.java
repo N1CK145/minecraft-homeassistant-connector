@@ -7,7 +7,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Map;
 
 public interface RedstoneAction {
-
     String getName();
     void execute(Player trigger);
     ItemStack getIcon();

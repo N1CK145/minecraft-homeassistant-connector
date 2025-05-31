@@ -8,6 +8,7 @@ import io.github.n1ck145.redhook.listeners.InventoryClickListener;
 import io.github.n1ck145.redhook.listeners.RedstoneBindListener;
 import io.github.n1ck145.redhook.listeners.RedstonePowerChangeListener;
 import io.github.n1ck145.redhook.manager.ActionFactory;
+import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
 import io.github.n1ck145.redhook.redstoneactions.PlayerMessageAction;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -22,6 +23,8 @@ public final class RedhookPlugin extends JavaPlugin {
         registerEvents();
         registerActions();
         loadConfigs();
+        
+        RedstoneLinkManager.initialize(this);
 
         this.getCommand("redhook").setExecutor(new RedhookCommand());
 

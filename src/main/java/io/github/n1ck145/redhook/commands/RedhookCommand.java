@@ -26,7 +26,6 @@ public class RedhookCommand implements CommandExecutor {
         meta.setDisplayName("§cRedstone Action Wand");
         meta.setLore(List.of("§7Use this to bind redstone actions", "§8(Right-click or break a block)"));
 
-        // Optional: Set a custom tag for identification
         NamespacedKey key = new NamespacedKey("redhook", "wand");
         meta.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte) 1);
 
