@@ -9,6 +9,7 @@ import io.github.n1ck145.redhook.listeners.RedstonePowerChangeListener;
 import io.github.n1ck145.redhook.manager.ActionFactory;
 import io.github.n1ck145.redhook.manager.ActionRegistry;
 import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
+import io.github.n1ck145.redhook.redstoneactions.CommandAction;
 import io.github.n1ck145.redhook.redstoneactions.PlayerMessageAction;
 import io.github.n1ck145.redhook.redstoneactions.RedstoneAction;
 import io.github.n1ck145.redhook.utils.ResponseMessage;
@@ -74,6 +75,7 @@ public final class RedhookPlugin extends JavaPlugin {
     private void registerActionTypes() {
         ActionFactory.register(PlayerMessageAction.class, PlayerMessageAction::deserialize);
         ActionFactory.register(HttpAction.class, HttpAction::deserialize);
+        ActionFactory.register(CommandAction.class, CommandAction::deserialize);
     }
 
     private void loadConfigs(){
