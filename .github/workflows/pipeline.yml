@@ -44,13 +44,13 @@ jobs:
         id: get_version
         run: |
           VERSION=$(unzip -p *.jar plugin.yml | grep "version:" | cut -d"'" -f2)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version=${VERSION//./_}" >> $GITHUB_OUTPUT
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.get_version.outputs.version }}
-          name: Release v${{ steps.get_version.outputs.version }}
+          tag_name: "v${{ steps.get_version.outputs.version }}"
+          name: "Release v${{ steps.get_version.outputs.version }}"
           files: "*.jar"
           generate_release_notes: true
         env:
