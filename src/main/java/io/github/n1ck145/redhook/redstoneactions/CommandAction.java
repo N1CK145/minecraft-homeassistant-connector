@@ -3,6 +3,7 @@ package io.github.n1ck145.redhook.redstoneactions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
@@ -60,8 +61,21 @@ public class CommandAction implements RedstoneAction {
     public static CommandAction deserialize(Map<?, ?> map) {
         String id = (String) map.get("id");
         String label = (String) map.get("label");
-        ArrayList<String> description = (ArrayList<String>) map.get("description");
-        String[] descriptionArray = description == null ? new String[0] : description.toArray(new String[0]);
+        Object descriptionObj = map.get("description");
+        String[] descriptionArray;
+        
+        if (descriptionObj instanceof List<?>) {
+            List<?> list = (List<?>) descriptionObj;
+            descriptionArray = list.stream()
+                .filter(obj -> obj instanceof String)
+                .map(obj -> (String) obj)
+                .toArray(String[]::new);
+        } else if (descriptionObj instanceof String) {
+            descriptionArray = new String[]{(String) descriptionObj};
+        } else {
+            descriptionArray = new String[0];
+        }
+        
         String command = (String) map.get("command");
 
         return new CommandAction(id, label, descriptionArray, command);

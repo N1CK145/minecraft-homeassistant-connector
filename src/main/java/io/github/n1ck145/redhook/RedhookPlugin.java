@@ -2,12 +2,13 @@ package io.github.n1ck145.redhook;
 
 import io.github.n1ck145.redhook.commands.RedhookCommand;
 import io.github.n1ck145.redhook.config.ConfigManager;
+import io.github.n1ck145.redhook.listeners.ChatInputListener;
 import io.github.n1ck145.redhook.listeners.DebugBlockBreakListener;
 import io.github.n1ck145.redhook.listeners.InventoryClickListener;
 import io.github.n1ck145.redhook.listeners.RedstoneBindListener;
 import io.github.n1ck145.redhook.listeners.RedstonePowerChangeListener;
 import io.github.n1ck145.redhook.listeners.DebugHologramListener;
-import io.github.n1ck145.redhook.lib.StaticItems;
+import io.github.n1ck145.redhook.listeners.WandInteractionListener;
 import io.github.n1ck145.redhook.manager.ActionFactory;
 import io.github.n1ck145.redhook.manager.ActionRegistry;
 import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
@@ -73,6 +74,8 @@ public final class RedhookPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new RedstoneBindListener(), this);
         getServer().getPluginManager().registerEvents(new DebugBlockBreakListener(), this);
         getServer().getPluginManager().registerEvents(new DebugHologramListener(), this);
+        getServer().getPluginManager().registerEvents(new ChatInputListener(), this);
+        getServer().getPluginManager().registerEvents(new WandInteractionListener(), this);
     }
 
     private void registerActionTypes() {

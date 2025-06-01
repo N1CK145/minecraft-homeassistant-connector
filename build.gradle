@@ -39,7 +39,7 @@ tasks.register("copyJarIfUserMatches") {
             }
             if (userName == "tippj") {
                 copy {
-                    from jarFile
+                    from jarFiles
                     into file("docker/data/plugins")
                 }
             }
