@@ -44,7 +44,7 @@ jobs:
         id: get_version
         run: |
           VERSION=$(unzip -p *.jar plugin.yml | grep "version:" | cut -d"'" -f2)
-          echo "version=${VERSION//./_}" >> $GITHUB_OUTPUT
+          echo "::set-output name=version::$VERSION"
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
