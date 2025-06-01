@@ -4,7 +4,8 @@ import io.github.n1ck145.redhook.RedhookPlugin;
 import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
 import io.github.n1ck145.redhook.redstoneactions.RedstoneActionInstance;
 import io.github.n1ck145.redhook.utils.HologramManager;
-import org.bukkit.NamespacedKey;
+import io.github.n1ck145.redhook.utils.DebugUtil;
+import io.github.n1ck145.redhook.utils.StateColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,8 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -35,11 +34,11 @@ public class DebugHologramListener implements Listener {
         }
 
         // If holding debug stick, start showing holograms
-        if (isDebugItem(newItem)) {
+        if (DebugUtil.isDebugItem(newItem)) {
             BukkitRunnable task = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    if (!player.isOnline() || !isDebugItem(player.getInventory().getItemInMainHand())) {
+                    if (!player.isOnline() || !DebugUtil.isDebugItem(player.getInventory().getItemInMainHand())) {
                         HologramManager.removeHologram(player);
                         cancel();
                         hologramTasks.remove(player);
@@ -56,12 +55,7 @@ public class DebugHologramListener implements Listener {
                             hologramText.append("§8§m").append("─".repeat(15)).append("\n");
                             
                             for (RedstoneActionInstance instance : instances) {
-                                String stateColor = "§7"; // Default color
-                                switch(instance.getTriggerCondition()) {
-                                    case ON -> stateColor = "§2";
-                                    case OFF -> stateColor = "§4";
-                                    case BOTH -> stateColor = "§9";
-                                }
+                                String stateColor = StateColor.valueOf(instance.getTriggerCondition().name()).getColorCode();
                                 
                                 hologramText.append("§f").append(instance.getAction().getId())
                                     .append("§8@").append(stateColor)
@@ -94,17 +88,5 @@ public class DebugHologramListener implements Listener {
             task.cancel();
         }
         HologramManager.removeHologram(player);
-    }
-
-    private boolean isDebugItem(ItemStack item) {
-        if (item == null || !item.hasItemMeta()) {
-            return false;
-        }
-
-        ItemMeta meta = item.getItemMeta();
-        NamespacedKey key = new NamespacedKey("redhook", "debug");
-
-        Byte value = meta.getPersistentDataContainer().get(key, PersistentDataType.BYTE);
-        return value != null && value == 1;
     }
 }
