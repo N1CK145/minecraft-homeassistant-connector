@@ -61,8 +61,9 @@ public class HttpAction implements RedstoneAction {
                 java.net.http.HttpResponse<String> response = client.send(request, 
                     java.net.http.HttpResponse.BodyHandlers.ofString());
 
+                Bukkit.getLogger().info("Webhook sent to " + url + " with status code " + response.statusCode());
             } catch (Exception e) {
-                Bukkit.getLogger().severe("Failed to execute webhook: " + e.getMessage());
+                Bukkit.getLogger().severe("Failed to execute webhook to " + url + ": " + e.getMessage());
                 e.printStackTrace();
             }
         });
