@@ -18,7 +18,7 @@ import io.github.n1ck145.redhook.RedhookPlugin;
 import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
 import io.github.n1ck145.redhook.redstoneactions.RedstoneActionInstance;
 
-public class BlockBreakListener implements Listener {
+public class DebugBlockBreakListener implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
