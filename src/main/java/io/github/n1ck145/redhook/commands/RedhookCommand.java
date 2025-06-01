@@ -78,8 +78,13 @@ public class RedhookCommand implements CommandExecutor {
 
         if (args.length == 0 || args[0].equalsIgnoreCase("reload")) {
             if (player.hasPermission("redhook.reload")) {
-                RedhookPlugin.getInstance().reloadConfigs();
-                player.sendMessage(RedhookPlugin.getPrefix() + "§aPlugin reloaded!");
+                boolean reloadSuccess = RedhookPlugin.getInstance().reloadConfigs();
+
+                if (reloadSuccess) {
+                    player.sendMessage(RedhookPlugin.getPrefix() + "§aPlugin reloaded!");
+                } else {
+                    player.sendMessage(RedhookPlugin.getPrefix() + "§cFailed to reload plugin. Check console for more information.");
+                }
             } else {
                 player.sendMessage(RedhookPlugin.getPrefix() + "§cYou don't have permission to use this command.");
             }
