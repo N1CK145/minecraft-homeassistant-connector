@@ -4,6 +4,8 @@ import io.github.n1ck145.redhook.manager.ActionFactory;
 import io.github.n1ck145.redhook.manager.ActionRegistry;
 import io.github.n1ck145.redhook.redstoneactions.PlayerMessageAction;
 import io.github.n1ck145.redhook.redstoneactions.RedstoneAction;
+import io.github.n1ck145.redhook.utils.ResponseMessage;
+
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -28,18 +30,26 @@ public class ActionsConfig {
         this.config = YamlConfiguration.loadConfiguration(configFile);
     }
 
-    public void loadActions() {
+    public ResponseMessage loadActions() {
         List<Map<?, ?>> list = config.getMapList("actions");
 
         for (Map<?, ?> map : list) {
             RedstoneAction action = ActionFactory.create(map);
 
             if (action != null) {
-                ActionRegistry.register(action);
+                try {
+                    ActionRegistry.register(action);
+                } catch (Exception e) {
+                    plugin.getLogger().warning("Failed to register action: " + e.getMessage());
+                    return new ResponseMessage("Failed to register action: " + e.getMessage(), false);
+                }
             } else {
                 plugin.getLogger().warning("Unknown or invalid action type in config: " + map.get("type"));
+                return new ResponseMessage("Unknown or invalid action type in config: " + map.get("type"), false);
             }
         }
+
+        return new ResponseMessage("Successfully loaded " + list.size() + " action(s)", true);
     }
 
     public void saveActions() {
