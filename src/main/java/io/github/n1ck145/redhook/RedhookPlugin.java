@@ -10,7 +10,11 @@ import io.github.n1ck145.redhook.manager.ActionFactory;
 import io.github.n1ck145.redhook.manager.ActionRegistry;
 import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
 import io.github.n1ck145.redhook.redstoneactions.PlayerMessageAction;
-import io.github.n1ck145.redhook.redstoneactions.WebhookAction;
+import io.github.n1ck145.redhook.redstoneactions.RedstoneAction;
+import io.github.n1ck145.redhook.redstoneactions.HttpAction;
+
+import java.util.List;
+
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class RedhookPlugin extends JavaPlugin {
@@ -24,20 +28,31 @@ public final class RedhookPlugin extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         registerEvents();
-        registerActions();
+        registerActionTypes();
         loadConfigs();
         
         RedstoneLinkManager.initialize(this);
 
         this.getCommand("redhook").setExecutor(new RedhookCommand());
-
-        this.getLogger().info("Enabled!");
+        
+        printRegisterStatus();
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
         this.getLogger().info("Disabled!");
+    }
+
+    private void printRegisterStatus(){
+        String[] actionTypes = ActionFactory.getRegisteredActions();
+        this.getLogger().info("Registered " + actionTypes.length + " action type(s):");
+        for (String type : actionTypes) {
+            this.getLogger().info("- " + type);
+        }
+        
+        List<RedstoneAction> actions = ActionRegistry.getAll();
+        this.getLogger().info("Registered " + actions.size() + " action(s)");
     }
 
     public static String getPrefix(){
@@ -49,19 +64,15 @@ public final class RedhookPlugin extends JavaPlugin {
     }
 
     private void registerEvents() {
-        this.getLogger().info("Register events...");
-
         getServer().getPluginManager().registerEvents(new RedstonePowerChangeListener(), this);
         getServer().getPluginManager().registerEvents(new InventoryClickListener(), this);
         getServer().getPluginManager().registerEvents(new RedstoneBindListener(), this);
         getServer().getPluginManager().registerEvents(new BlockBreakListener(), this);
     }
 
-    private void registerActions() {
-        this.getLogger().info("Register actions...");
-        
-        ActionFactory.register("PlayerMessageAction", PlayerMessageAction::deserialize);
-        ActionFactory.register("WebhookAction", WebhookAction::deserialize);
+    private void registerActionTypes() {
+        ActionFactory.register(PlayerMessageAction.class, PlayerMessageAction::deserialize);
+        ActionFactory.register(HttpAction.class, HttpAction::deserialize);
     }
 
     private void loadConfigs(){

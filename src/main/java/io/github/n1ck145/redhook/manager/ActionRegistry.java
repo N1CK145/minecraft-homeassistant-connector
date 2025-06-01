@@ -10,6 +10,9 @@ public class ActionRegistry {
     private static final Map<String, RedstoneAction> actions = new HashMap<>();
 
     public static void register(RedstoneAction action) {
+        if (actions.containsKey(action.getId())) {
+            throw new IllegalArgumentException("Action with ID " + action.getId() + " is already registered");
+        }
         actions.put(action.getId(), action);
     }
 
@@ -23,5 +26,9 @@ public class ActionRegistry {
 
     public static void clear() {
         actions.clear();
+    }
+
+    public static String getTypeName(RedstoneAction action) {
+        return action.getClass().getName();
     }
 }

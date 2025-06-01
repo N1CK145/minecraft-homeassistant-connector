@@ -1,5 +1,6 @@
 package io.github.n1ck145.redhook.redstoneactions;
 
+import io.github.n1ck145.redhook.manager.ActionRegistry;
 import io.github.n1ck145.redhook.utils.ActionDeserializer;
 import io.github.n1ck145.redhook.utils.ColorMapper;
 
@@ -15,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlayerMessageAction implements RedstoneAction {
-    private static final String name = "PlayerMessageAction";
     private final String message;
     private final String targetPlayerName; // nullable
     private final String id;
@@ -70,7 +70,7 @@ public class PlayerMessageAction implements RedstoneAction {
         Map<String, Object> map = new HashMap<>();
         
         map.put("id", id);
-        map.put("type", name);
+        map.put("type", ActionRegistry.getTypeName(this));
         map.put("label", label);
         map.put("description", description);
 
@@ -90,11 +90,6 @@ public class PlayerMessageAction implements RedstoneAction {
         String[] descriptionArray = description == null ? new String[0] : description.toArray(new String[0]);
 
         return new PlayerMessageAction(id, message, targetStr, label, descriptionArray);
-    }
-
-    @Override
-    public String getName(){
-        return name;
     }
 
     @Override

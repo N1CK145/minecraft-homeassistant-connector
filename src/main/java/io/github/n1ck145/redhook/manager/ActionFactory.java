@@ -8,9 +8,19 @@ import java.util.Map;
 
 public class ActionFactory {
     private static final Map<String, ActionDeserializer> deserializers = new HashMap<>();
+    private static final Map<String, Class<? extends RedstoneAction>> actionClasses = new HashMap<>();
 
-    public static void register(String type, ActionDeserializer deserializer) {
-        deserializers.put(type, deserializer);
+    public static String register(Class<? extends RedstoneAction> actionClass, ActionDeserializer deserializer) {
+        String name = actionClass.getSimpleName();
+
+        if (deserializers.containsKey(name)) {
+            throw new IllegalArgumentException("Action class " + name + " is already registered by " + actionClasses.get(name).getName());
+        }
+
+        deserializers.put(name, deserializer);
+        actionClasses.put(name, actionClass);
+
+        return name;
     }
 
     public static RedstoneAction create(Map<?, ?> map) {
@@ -22,5 +32,9 @@ public class ActionFactory {
         }
 
         return null;
+    }
+
+    public static String[] getRegisteredActions() {
+        return deserializers.keySet().toArray(new String[0]);
     }
 }

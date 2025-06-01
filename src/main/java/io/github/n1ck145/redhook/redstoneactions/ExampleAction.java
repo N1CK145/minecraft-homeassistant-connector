@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import io.github.n1ck145.redhook.manager.ActionRegistry;
 import io.github.n1ck145.redhook.utils.ColorMapper;
 
 // To create your own action, copy this class and modify it
@@ -19,7 +20,6 @@ import io.github.n1ck145.redhook.utils.ColorMapper;
 // ActionFactory.register("ExampleAction", ExampleAction::deserialize);
 // You should register it in the RedhookPlugin class
 public class ExampleAction implements RedstoneAction {
-    private static final String name = "ExampleAction";
     private static final Material material = Material.DIAMOND;
     private final String id;
     private final String label;
@@ -55,7 +55,7 @@ public class ExampleAction implements RedstoneAction {
         Map<String, Object> map = new HashMap<>();
         
         map.put("id", id);
-        map.put("type", name);
+        map.put("type", ActionRegistry.getTypeName(this));
         map.put("label", label);
         map.put("description", description);
 
@@ -74,11 +74,6 @@ public class ExampleAction implements RedstoneAction {
     @Override
     public String getId() {
         return id;
-    }
-
-    @Override
-    public String getName(){
-        return name;
     }
 
     @Override

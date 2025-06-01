@@ -14,8 +14,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import io.github.n1ck145.redhook.RedhookPlugin;
 import io.github.n1ck145.redhook.utils.ColorMapper;
 
-public class WebhookAction implements RedstoneAction {
-    private static final String name = "WebhookAction";
+public class HttpAction implements RedstoneAction {
+    public static final String name = "WebhookAction";
     private static final Material material = Material.NETHER_STAR;
     private final String id;
     private final String label;
@@ -27,7 +27,7 @@ public class WebhookAction implements RedstoneAction {
     private final String method;
 
 
-    public WebhookAction(String id, String label, String[] description, String url, Map<String, String> headers, String body, String method) {
+    public HttpAction(String id, String label, String[] description, String url, Map<String, String> headers, String body, String method) {
         this.id = id;
         this.label = label;
         this.description = description;
@@ -99,7 +99,7 @@ public class WebhookAction implements RedstoneAction {
         return map;
     }
 
-    public static WebhookAction deserialize(Map<?, ?> map) {
+    public static HttpAction deserialize(Map<?, ?> map) {
         String id = (String) map.get("id");
         String label = (String) map.get("label");
         ArrayList<String> description = (ArrayList<String>) map.get("description");
@@ -110,17 +110,12 @@ public class WebhookAction implements RedstoneAction {
         String body = (String) map.get("body");
         String method = (String) map.get("method");
 
-        return new WebhookAction(id, label, descriptionArray, url, headers, body, method);
+        return new HttpAction(id, label, descriptionArray, url, headers, body, method);
     }
 
     @Override
     public String getId() {
         return id;
-    }
-
-    @Override
-    public String getName(){
-        return name;
     }
 
     @Override

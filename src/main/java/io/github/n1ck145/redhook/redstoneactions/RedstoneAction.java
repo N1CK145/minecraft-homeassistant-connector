@@ -6,13 +6,12 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Map;
 
 public interface RedstoneAction {
-    String getName();
+    String getId();
     String getLabel();
-    void execute(Player trigger);
-    ItemStack getIcon();
-    String getId(); // unique action ID for config storage
     String[] getDescription();
-
+    ItemStack getIcon();
+    
+    void execute(Player trigger);
     Map<String, Object> serialize();
 }
 
