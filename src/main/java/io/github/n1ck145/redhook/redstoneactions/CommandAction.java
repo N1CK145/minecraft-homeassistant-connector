@@ -9,10 +9,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import io.github.n1ck145.redhook.manager.ActionRegistry;
 import io.github.n1ck145.redhook.utils.ColorMapper;
+import io.github.n1ck145.redhook.utils.ItemBuilder;
 
 public class CommandAction implements RedstoneAction {
     private static final Material material = Material.COMMAND_BLOCK;
@@ -38,14 +38,10 @@ public class CommandAction implements RedstoneAction {
     public ItemStack getIcon() {
         String title = ColorMapper.map(label);
         String[] lore = Arrays.stream(description).map(ColorMapper::map).toArray(String[]::new);
-
-        ItemStack item = new ItemStack(material);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(title);
-        meta.setLore(Arrays.asList(lore));
-        item.setItemMeta(meta);
-
-        return item;
+        return new ItemBuilder(material)
+            .name(title)
+            .lore(lore)
+            .build();
     }
 
     @Override
