@@ -123,3 +123,6 @@ runs/
 
 # binaries
 bin/
+
+# Docker
+docker/data/
