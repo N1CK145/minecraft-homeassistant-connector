@@ -2,8 +2,12 @@ plugins {
     id 'java'
 }
 
+ext {
+    buildNumber = String.format("%04d", (System.getenv("GITHUB_RUN_NUMBER") ?: "0").toInteger())
+}
+
 group = 'io.github.n1ck145'
-version = '1.0-SNAPSHOT'
+version = '1.0.0.' + buildNumber
 
 repositories {
     mavenCentral()
@@ -24,14 +28,12 @@ dependencies {
 tasks.register("copyJarIfUserMatches") {
     doLast {
         def userName = System.getProperty("user.name")
-        println "Gradle is running as user: ${userName}"
-
-        def jarFile = file("build/libs/${project.name}-${project.version}.jar")
-
-        if (jarFile.exists()) {
+        def jarFiles = fileTree("build/libs").include("*.jar")
+        
+        if (!jarFiles.isEmpty()) {
             if (userName == "nicka") {
                 copy {
-                    from jarFile
+                    from jarFiles
                     into file("C:\\Users\\nicka\\Desktop\\MC Server\\plugins")
                 }
             }
@@ -39,7 +41,14 @@ tasks.register("copyJarIfUserMatches") {
     }
 }
 
+tasks.register("cleanLibs") {
+    doLast {
+        delete fileTree("build/libs").include("*.jar")
+    }
+}
+
 tasks.named("jar") {
+    dependsOn("cleanLibs")
     finalizedBy("copyJarIfUserMatches")
 }
 
@@ -68,4 +77,10 @@ processResources {
     filesMatching('plugin.yml') {
         expand props
     }
+}
+
+jar {
+    archiveBaseName.set(project.name)
+    archiveVersion.set(version)
+    archiveClassifier.set("")
 }
