@@ -7,6 +7,7 @@ import io.github.n1ck145.redhook.listeners.InventoryClickListener;
 import io.github.n1ck145.redhook.listeners.RedstoneBindListener;
 import io.github.n1ck145.redhook.listeners.RedstonePowerChangeListener;
 import io.github.n1ck145.redhook.listeners.DebugHologramListener;
+import io.github.n1ck145.redhook.lib.StaticItems;
 import io.github.n1ck145.redhook.manager.ActionFactory;
 import io.github.n1ck145.redhook.manager.ActionRegistry;
 import io.github.n1ck145.redhook.manager.RedstoneLinkManager;

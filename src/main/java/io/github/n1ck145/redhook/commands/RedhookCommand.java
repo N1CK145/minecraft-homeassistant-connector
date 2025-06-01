@@ -1,52 +1,21 @@
 package io.github.n1ck145.redhook.commands;
 
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
 
 import io.github.n1ck145.redhook.RedhookPlugin;
-
-import java.util.List;
+import io.github.n1ck145.redhook.lib.StaticItems;
 
 public class RedhookCommand implements CommandExecutor {
     private final ItemStack wand;
     private final ItemStack debug;
 
     public RedhookCommand() {
-        this.wand = createWandItem();
-        this.debug = createDebugItem();
-    }
-
-    private ItemStack createDebugItem() {
-        ItemStack item = new ItemStack(Material.BRUSH);
-        ItemMeta meta = item.getItemMeta();
-
-        NamespacedKey key = new NamespacedKey("redhook", "debug");
-        meta.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte) 1);
-
-        meta.setDisplayName("§cRedhook Debug Stick");
-        meta.setLore(List.of("§7Use this to debug redstone actions", "§8(Right-click or break a block)"));
-        item.setItemMeta(meta);
-        return item;
-    }
-
-    private ItemStack createWandItem() {
-        ItemStack item = new ItemStack(Material.CALIBRATED_SCULK_SENSOR);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName("§cRedstone Action Wand");
-        meta.setLore(List.of("§7Use this to bind redstone actions", "§8(Right-click or break a block)"));
-
-        NamespacedKey key = new NamespacedKey("redhook", "wand");
-        meta.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte) 1);
-
-        item.setItemMeta(meta);
-        return item;
+        this.wand = StaticItems.WAND.clone();
+        this.debug = StaticItems.DEBUG.clone();
     }
 
     @Override
