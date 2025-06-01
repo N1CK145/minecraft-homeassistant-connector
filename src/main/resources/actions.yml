@@ -1,0 +1,12 @@
+actions:
+  - id: broadcast_welcome                   # ID of your action
+    type: PlayerMessageAction               # Action types
+    label: "Broadcast Welcome"
+    message: "Welcome to the server!"       # Action specific configurations
+    target: null
+
+  - id: private_msg
+    type: PlayerMessageAction
+    label: "Private Message"
+    message: "Hello!"
+    target: YOUR_NAME
