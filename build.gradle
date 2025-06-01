@@ -35,7 +35,7 @@ tasks.register("copyJarIfUserMatches") {
                     into file("C:\\Users\\nicka\\Desktop\\MC Server\\plugins")
                 }
             }
-            if (userName == "tippj") {
+            if (file("docker/data").exists()) {
                 copy {
                     from jarFiles
                     into file("docker/data/plugins")
