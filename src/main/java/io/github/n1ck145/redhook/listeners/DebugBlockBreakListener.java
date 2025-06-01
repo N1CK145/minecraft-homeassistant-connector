@@ -17,7 +17,7 @@ import org.bukkit.persistence.PersistentDataType;
 import io.github.n1ck145.redhook.RedhookPlugin;
 import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
 import io.github.n1ck145.redhook.redstoneactions.RedstoneActionInstance;
-import io.github.n1ck145.redhook.utils.DebugUtil;
+import io.github.n1ck145.redhook.utils.ItemUtil;
 import io.github.n1ck145.redhook.utils.StateColor;
 
 public class DebugBlockBreakListener implements Listener {
@@ -32,7 +32,7 @@ public class DebugBlockBreakListener implements Listener {
             return;
         }
 
-        if(DebugUtil.isDebugItem(player.getInventory().getItemInMainHand())){
+        if(ItemUtil.isDebugItem(player.getInventory().getItemInMainHand())){
             event.setCancelled(true);
             debug(block, player);
             return;
