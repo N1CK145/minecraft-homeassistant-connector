@@ -10,6 +10,7 @@ import io.github.n1ck145.redhook.manager.ActionFactory;
 import io.github.n1ck145.redhook.manager.ActionRegistry;
 import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
 import io.github.n1ck145.redhook.redstoneactions.PlayerMessageAction;
+import io.github.n1ck145.redhook.redstoneactions.WebhookAction;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class RedhookPlugin extends JavaPlugin {
@@ -60,6 +61,7 @@ public final class RedhookPlugin extends JavaPlugin {
         this.getLogger().info("Register actions...");
         
         ActionFactory.register("PlayerMessageAction", PlayerMessageAction::deserialize);
+        ActionFactory.register("WebhookAction", WebhookAction::deserialize);
     }
 
     private void loadConfigs(){

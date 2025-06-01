@@ -13,7 +13,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import io.github.n1ck145.redhook.utils.ColorMapper;
 
-
+// To create your own action, copy this class and modify it
+//
 // To register the action, you need to register it in the ActionFactory class
 // ActionFactory.register("ExampleAction", ExampleAction::deserialize);
 // You should register it in the RedhookPlugin class
