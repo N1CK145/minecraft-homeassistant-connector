@@ -1,0 +1,68 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-plugin:
+    name: Build Minecraft Plugin
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build plugin with Gradle
+        run: ./gradlew build
+
+      - name: Upload plugin artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: minecraft-plugin
+          path: build/libs/*.jar
+
+  release-plugin:
+    name: Release Plugin
+    needs: build-plugin
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download plugin artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: minecraft-plugin
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "*.jar"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # build-mkdocs:
+  #   name: Build and Deploy MkDocs
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: '3.11'
+
+  #     - name: Install Material for MkDocs
+  #       run: |
+  #         pip install mkdocs-material
+
+  #     - name: Deploy to GitHub Pages
+  #       run: mkdocs gh-deploy --force
