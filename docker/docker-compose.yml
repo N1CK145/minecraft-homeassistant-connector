@@ -1,0 +1,20 @@
+services:
+  minecraft:
+    image: itzg/minecraft-server
+    ports:
+      - "25565:25565"
+    environment:
+      EULA: "TRUE"
+      TYPE: "PAPER"
+      VERSION: "1.21.4"
+      MEMORY: "2G"
+      DIFFICULTY: "normal"
+      MOTD: "RedHook Development Server"
+      ENABLE_RCON: "true"
+      RCON_PASSWORD: "minecraft"
+      RCON_PORT: "25575"
+    volumes:
+      - ./data:/data
+    tty: true
+    stdin_open: true
+    restart: unless-stopped 
