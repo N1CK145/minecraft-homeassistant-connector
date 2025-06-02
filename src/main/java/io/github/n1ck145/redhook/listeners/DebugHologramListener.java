@@ -57,7 +57,7 @@ public class DebugHologramListener implements Listener {
                             for (RedstoneActionInstance instance : instances) {
                                 String stateColor = StateColor.valueOf(instance.getTriggerCondition().name()).getColorCode();
                                 
-                                hologramText.append("§f").append(instance.getAction().getId())
+                                hologramText.append("§f").append(instance.getAction().getLabel())
                                     .append("§8@").append(stateColor)
                                     .append(instance.getTriggerCondition().name()).append("\n");
                             }
