@@ -10,7 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import io.github.n1ck145.redhook.manager.ActionRegistry;
+import io.github.n1ck145.redhook.lib.ActionConfigurationItem;
 import io.github.n1ck145.redhook.utils.ColorMapper;
 import io.github.n1ck145.redhook.utils.ItemBuilder;
 
@@ -51,7 +51,6 @@ public class ExampleAction implements RedstoneAction {
         Map<String, Object> map = new HashMap<>();
         
         map.put("id", id);
-        map.put("type", ActionRegistry.getTypeName(this));
         map.put("label", label);
         map.put("description", description);
 
@@ -65,6 +64,13 @@ public class ExampleAction implements RedstoneAction {
         String[] descriptionArray = description == null ? new String[0] : description.toArray(new String[0]);
 
         return new ExampleAction(id, label, descriptionArray);
+    }
+
+    @Override
+    public Map<String, ActionConfigurationItem> getConfigurationItems() {
+        return Map.of(
+            "message", new ActionConfigurationItem(Material.PAPER, "Message", "The message to send", String.class)
+        );
     }
 
     @Override
