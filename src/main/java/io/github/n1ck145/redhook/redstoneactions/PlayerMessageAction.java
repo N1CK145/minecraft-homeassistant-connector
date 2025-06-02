@@ -1,6 +1,6 @@
 package io.github.n1ck145.redhook.redstoneactions;
 
-import io.github.n1ck145.redhook.manager.ActionRegistry;
+import io.github.n1ck145.redhook.lib.ActionConfigurationItem;
 import io.github.n1ck145.redhook.utils.ColorMapper;
 import io.github.n1ck145.redhook.utils.ItemBuilder;
 
@@ -63,7 +63,6 @@ public class PlayerMessageAction implements RedstoneAction {
         Map<String, Object> map = new HashMap<>();
         
         map.put("id", id);
-        map.put("type", ActionRegistry.getTypeName(this));
         map.put("label", label);
         map.put("description", description);
 
@@ -95,6 +94,14 @@ public class PlayerMessageAction implements RedstoneAction {
         }
 
         return new PlayerMessageAction(id, message, targetStr, label, descriptionArray);
+    }
+
+    @Override
+    public Map<String, ActionConfigurationItem> getConfigurationItems() {
+        return Map.of(
+            "message", new ActionConfigurationItem(Material.PAPER, "Message", "The message to send", String.class),
+            "target", new ActionConfigurationItem(Material.PAPER, "Target", "The target player to send the message to", String.class)
+        );
     }
 
     @Override

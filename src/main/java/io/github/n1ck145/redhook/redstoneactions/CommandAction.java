@@ -1,6 +1,5 @@
 package io.github.n1ck145.redhook.redstoneactions;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import io.github.n1ck145.redhook.lib.ActionConfigurationItem;
 import io.github.n1ck145.redhook.manager.ActionRegistry;
 import io.github.n1ck145.redhook.utils.ColorMapper;
 import io.github.n1ck145.redhook.utils.ItemBuilder;
@@ -79,6 +79,13 @@ public class CommandAction implements RedstoneAction {
         String command = (String) map.get("command");
 
         return new CommandAction(id, label, descriptionArray, command);
+    }
+
+    @Override
+    public Map<String, ActionConfigurationItem> getConfigurationItems() {
+        return Map.of(
+            "command", new ActionConfigurationItem(Material.COMMAND_BLOCK, "Command", "The command to execute", String.class)
+        );
     }
 
     @Override

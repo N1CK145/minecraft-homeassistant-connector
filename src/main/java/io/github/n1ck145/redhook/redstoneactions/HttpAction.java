@@ -3,6 +3,7 @@ package io.github.n1ck145.redhook.redstoneactions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
@@ -11,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.n1ck145.redhook.RedhookPlugin;
+import io.github.n1ck145.redhook.lib.ActionConfigurationItem;
 import io.github.n1ck145.redhook.utils.ColorMapper;
 import io.github.n1ck145.redhook.utils.ItemBuilder;
 
@@ -84,7 +86,6 @@ public class HttpAction implements RedstoneAction {
         Map<String, Object> map = new HashMap<>();
         
         map.put("id", id);
-        map.put("type", name);
         map.put("label", label);
         map.put("description", description);
 
@@ -99,8 +100,22 @@ public class HttpAction implements RedstoneAction {
     public static HttpAction deserialize(Map<?, ?> map) {
         String id = (String) map.get("id");
         String label = (String) map.get("label");
-        ArrayList<String> description = (ArrayList<String>) map.get("description");
-        String[] descriptionArray = description == null ? new String[0] : description.toArray(new String[0]);
+        Object descriptionObj = map.get("description");
+        String[] descriptionArray;
+        
+        if (descriptionObj instanceof List<?>) {
+            List<?> list = (List<?>) descriptionObj;
+            descriptionArray = list.stream()
+                .filter(obj -> obj instanceof String)
+                .map(obj -> (String) obj)
+                .toArray(String[]::new);
+        } else if (descriptionObj instanceof String[]) {
+            descriptionArray = (String[]) descriptionObj;
+        } else if (descriptionObj instanceof String) {
+            descriptionArray = new String[]{(String) descriptionObj};
+        } else {
+            descriptionArray = new String[0];
+        }
 
         String url = (String) map.get("url");
         Map<String, String> headers = (Map<String, String>) map.get("headers");
@@ -108,6 +123,16 @@ public class HttpAction implements RedstoneAction {
         String method = (String) map.get("method");
 
         return new HttpAction(id, label, descriptionArray, url, headers, body, method);
+    }
+
+    @Override
+    public Map<String, ActionConfigurationItem> getConfigurationItems() {
+        return Map.of(
+            "url", new ActionConfigurationItem(Material.NETHER_STAR, "URL", "The URL to send the webhook to", String.class),
+            "headers", new ActionConfigurationItem(Material.PAPER, "Headers", "The headers to send with the webhook", Map.class),
+            "body", new ActionConfigurationItem(Material.PAPER, "Body", "The body to send with the webhook", String.class),
+            "method", new ActionConfigurationItem(Material.PAPER, "Method", "The method to send with the webhook", String.class)
+        );
     }
 
     @Override

@@ -1,9 +1,16 @@
 package io.github.n1ck145.redhook.inventories;
 
-import io.github.n1ck145.redhook.manager.MenuManager;
+import io.github.n1ck145.redhook.RedhookPlugin;
+import io.github.n1ck145.redhook.lib.ActionConfigurationItem;
 import io.github.n1ck145.redhook.manager.ActionFactory;
 import io.github.n1ck145.redhook.redstoneactions.RedstoneAction;
 import io.github.n1ck145.redhook.utils.ItemBuilder;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -11,15 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import java.io.File;
-import java.io.IOException;
-import java.util.UUID;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import io.github.n1ck145.redhook.RedhookPlugin;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class CreateActionMenu implements Menu {
 
@@ -36,13 +34,18 @@ public class CreateActionMenu implements Menu {
   private final Class<? extends RedstoneAction> actionType;
   private static final String TITLE = "§6Configure Action";
   private String currentEditingField = null;
-  private static final File ACTIONS_FILE = new File("plugins/Redhook/actions.yml");
+  private static final File ACTIONS_FILE = new File(
+    "plugins/Redhook/actions.yml"
+  );
 
   //public CreateActionMenu(Player player) {
-    // this(player, ActionType.COMMAND);
+  // this(player, ActionType.COMMAND);
   //}
 
-  public CreateActionMenu(Player player, Class<? extends RedstoneAction> actionType) {
+  public CreateActionMenu(
+    Player player,
+    Class<? extends RedstoneAction> actionType
+  ) {
     this.player = player;
     this.actionType = actionType;
     this.command = "";
@@ -60,12 +63,12 @@ public class CreateActionMenu implements Menu {
 
   @Override
   public void open() {
-    Inventory inv = Bukkit.createInventory(null, 27, TITLE);
+    Inventory inv = Bukkit.createInventory(null, 36, TITLE);
 
     // Set background
     ItemStack background = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
-        .name(" ")
-        .build();
+      .name(" ")
+      .build();
 
     for (int i = 0; i < inv.getSize(); i++) {
       inv.setItem(i, background);
@@ -73,125 +76,88 @@ public class CreateActionMenu implements Menu {
 
     // Action buttons
     ItemStack labelButton = new ItemBuilder(Material.NAME_TAG)
-        .name("§eSet Label")
-        .lore(
-            "§7Current: §f" + (label != null ? label : "None"),
-            "§7Click to set a new label"
-        )
-        .build();
-    inv.setItem(10, labelButton);
+      .name("§eSet Label")
+      .lore(
+        "§7Current: §f" + (label != null ? label : "None"),
+        "§7Click to set a new label"
+      )
+      .build();
+    inv.setItem(2, labelButton);
 
     ItemStack descButton = new ItemBuilder(Material.BOOK)
-        .name("§eSet Description")
-        .lore(
-            "§7Current: §f" + (description != null ? description : "None"),
-            "§7Click to set a new description"
-        )
-        .build();
-    inv.setItem(12, descButton);
-
-    // Action-specific buttons
-    String actionTypeName = actionType.getSimpleName();
-    switch (actionTypeName) {
-      case "CommandAction":
-        ItemStack cmdButton = new ItemBuilder(Material.COMMAND_BLOCK)
-            .name("§eSet Command")
-            .lore(
-                "§7Current: §f" + (command.isEmpty() ? "None" : command),
-                "§7Click to set a new command"
-            )
-            .build();
-        inv.setItem(14, cmdButton);
-        break;
-      case "PlayerMessageAction":
-        ItemStack msgButton = new ItemBuilder(Material.BOOK)
-            .name("§eSet Message")
-            .lore(
-                "§7Current: §f" + (message.isEmpty() ? "None" : message),
-                "§7Click to set the message"
-            )
-            .build();
-        inv.setItem(14, msgButton);
-
-        ItemStack targetButton = new ItemBuilder(Material.PLAYER_HEAD)
-            .name("§eSet Target Player")
-            .lore(
-                "§7Current: §f" + (target.isEmpty() ? "All Players" : target),
-                "§7Click to set target player",
-                "§7Leave empty to broadcast to all players"
-            )
-            .build();
-        inv.setItem(16, targetButton);
-        break;
-      case "HttpAction":
-        ItemStack urlButton = new ItemBuilder(Material.PAPER)
-            .name("§eSet URL")
-            .lore(
-                "§7Current: §f" + (url.isEmpty() ? "None" : url),
-                "§7Click to set the URL"
-            )
-            .build();
-        inv.setItem(10, urlButton);
-
-        ItemStack methodButton = new ItemBuilder(Material.COMPARATOR)
-            .name("§eSet Method")
-            .lore(
-                "§7Current: §f" + method,
-                "§7Click to set the HTTP method"
-            )
-            .build();
-        inv.setItem(11, methodButton);
-
-        ItemStack bodyButton = new ItemBuilder(Material.BOOK)
-            .name("§eSet Body")
-            .lore(
-                "§7Current: §f" + (body.isEmpty() ? "None" : body),
-                "§7Click to set the request body"
-            )
-            .build();
-        inv.setItem(12, bodyButton);
-
-        ItemStack headersButton = new ItemBuilder(Material.BOOK)
-            .name("§eSet Headers")
-            .lore(
-                "§7Current Headers:",
-                headers.isEmpty() ? "§7None" : String.join("\n", headers.entrySet().stream()
-                    .map(e -> "§7" + e.getKey() + ": " + e.getValue())
-                    .toArray(String[]::new))
-            )
-            .build();
-        inv.setItem(13, headersButton);
-        break;
-      default:
-        player.sendMessage("§cUnknown action type: " + actionTypeName);
-        player.closeInventory();
-        return;
-    }
+      .name("§eSet Description")
+      .lore(
+        "§7Current: §f" + (description != null ? description : "None"),
+        "§7Click to set a new description"
+      )
+      .build();
+    inv.setItem(4, descButton);
 
     ItemStack saveButton = new ItemBuilder(Material.EMERALD_BLOCK)
-        .name("§aSave Action")
-        .lore(
-            "§7Click to save this action",
-            isReadyToSave() ? "§aReady to save!" : "§cRequired fields not set!"
-        )
-        .build();
-    inv.setItem(22, saveButton);
+      .name("§aSave Action")
+      .lore(
+        "§7Click to save this action",
+        isReadyToSave() ? "§aReady to save!" : "§cRequired fields not set!"
+      )
+      .build();
+    inv.setItem(6, saveButton);
+
+    // Get position of the action
+    Map<Integer, ItemStack> configItems = getConfigurationItems();
+    configItems.forEach(inv::setItem);
 
     player.openInventory(inv);
   }
 
   private boolean isReadyToSave() {
-    String actionTypeName = actionType.getSimpleName();
-    switch (actionTypeName) {
-      case "CommandAction":
-        return !command.isEmpty();
-      case "PlayerMessageAction":
-        return !message.isEmpty();
-      case "HttpAction":
-        return !url.isEmpty();
-      default:
-        return false;
+    try {
+      // Create a temporary action instance to get its configuration items
+      Map<String, Object> tempMap = new HashMap<>();
+      tempMap.put("id", "temp");
+      tempMap.put("label", "temp");
+      tempMap.put("description", new String[0]);
+      tempMap.put("type", actionType.getSimpleName());
+
+      // Add required fields based on action type
+      String actionTypeName = actionType.getSimpleName();
+      switch (actionTypeName) {
+        case "CommandAction":
+          tempMap.put("command", "");
+          break;
+        case "PlayerMessageAction":
+          tempMap.put("message", "");
+          tempMap.put("target", null);
+          break;
+        case "HttpAction":
+          tempMap.put("url", "");
+          tempMap.put("method", "GET");
+          tempMap.put("body", "");
+          tempMap.put("headers", new HashMap<String, String>());
+          break;
+      }
+
+      // Create the action and get its configuration items
+      RedstoneAction action = ActionFactory.create(tempMap);
+      if (action != null) {
+        Map<String, ActionConfigurationItem> configItems =
+          action.getConfigurationItems();
+
+        // Check if all required fields are set
+        for (String key : configItems.keySet()) {
+          String value = getCurrentValue(key);
+          if (value == null || value.isEmpty()) {
+            return false;
+          }
+        }
+        return true;
+      }
+    } catch (Exception e) {
+      player.sendMessage(
+        "§cError checking if ready to save: " + e.getMessage()
+      );
+      e.printStackTrace();
     }
+    return false;
   }
 
   @Override
@@ -200,22 +166,21 @@ public class CreateActionMenu implements Menu {
     event.setCancelled(true);
 
     int slot = event.getRawSlot();
-    
+    ItemStack clickedItem = event.getCurrentItem();
+    Map<Integer, ItemStack> configItems = getConfigurationItems();
+
     switch (slot) {
-      case 10: // Label button
+      case 2: // Label button
         currentEditingField = "label";
         player.closeInventory();
         player.sendMessage("§ePlease enter the label in chat:");
         break;
-      case 12: // Description button
+      case 4: // Description button
         currentEditingField = "description";
         player.closeInventory();
         player.sendMessage("§ePlease enter the description in chat:");
         break;
-      case 14, 16: // Action-specific button
-        handleActionSpecificButton(event);
-        break;
-      case 22: // Save button
+      case 6: // Save button
         if (!isReadyToSave()) {
           player.sendMessage("§cRequired fields are not set!");
           return;
@@ -224,53 +189,74 @@ public class CreateActionMenu implements Menu {
         player.closeInventory();
         player.sendMessage("§aAction saved successfully!");
         break;
+      default:
+        // Check if the clicked slot contains a configuration item
+        if (configItems.containsKey(slot) && clickedItem != null) {
+          handleActionSpecificButton(event);
+        }
+        break;
     }
   }
 
   private void handleActionSpecificButton(InventoryClickEvent event) {
-    String actionTypeName = actionType.getSimpleName();
-    switch (actionTypeName) {
-      case "CommandAction":
-        currentEditingField = "command";
-        player.closeInventory();
-        player.sendMessage("§ePlease enter the command in chat:");
-        break;
-      case "PlayerMessageAction":
-        if (event.getRawSlot() == 14) {
-          currentEditingField = "message";
-          player.closeInventory();
-          player.sendMessage("§ePlease enter the message in chat:");
-        } else if (event.getRawSlot() == 16) {
-          currentEditingField = "target";
-          player.closeInventory();
-          player.sendMessage("§ePlease enter the target player name (or leave empty for all players):");
-        }
-        break;
-      case "HttpAction":
+    try {
+      // Create a temporary action instance to get its configuration items
+      Map<String, Object> tempMap = new HashMap<>();
+      tempMap.put("id", "temp");
+      tempMap.put("label", "temp");
+      tempMap.put("description", new String[0]);
+      tempMap.put("type", actionType.getSimpleName());
+
+      // Add required fields based on action type
+      String actionTypeName = actionType.getSimpleName();
+      switch (actionTypeName) {
+        case "CommandAction":
+          tempMap.put("command", "");
+          break;
+        case "PlayerMessageAction":
+          tempMap.put("message", "");
+          tempMap.put("target", null);
+          break;
+        case "HttpAction":
+          tempMap.put("url", "");
+          tempMap.put("method", "GET");
+          tempMap.put("body", "");
+          tempMap.put("headers", new HashMap<String, String>());
+          break;
+      }
+
+      // Create the action and get its configuration items
+      RedstoneAction action = ActionFactory.create(tempMap);
+      if (action != null) {
+        Map<String, ActionConfigurationItem> configItems =
+          action.getConfigurationItems();
+
+        // Find the configuration item for the clicked slot
         int slot = event.getRawSlot();
-        switch (slot) {
-          case 10: // URL
-            currentEditingField = "url";
+        int currentSlot = 10;
+        for (Map.Entry<
+          String,
+          ActionConfigurationItem
+        > entry : configItems.entrySet()) {
+          if (currentSlot == slot) {
+            String key = entry.getKey();
+            currentEditingField = key;
             player.closeInventory();
-            player.sendMessage("§ePlease enter the URL in chat:");
-            break;
-          case 11: // Method
-            currentEditingField = "method";
-            player.closeInventory();
-            player.sendMessage("§ePlease enter the HTTP method (GET, POST, PUT, DELETE):");
-            break;
-          case 12: // Body
-            currentEditingField = "body";
-            player.closeInventory();
-            player.sendMessage("§ePlease enter the request body in chat:");
-            break;
-          case 13: // Headers
-            currentEditingField = "headers";
-            player.closeInventory();
-            player.sendMessage("§ePlease enter a header in the format 'key:value' (or 'done' to finish):");
-            break;
+            player.sendMessage(
+              "§ePlease enter the " +
+              entry.getValue().getLabel().toLowerCase() +
+              " in chat:"
+            );
+            return;
+          }
+          currentSlot++;
         }
-        break;
+      }
+    } catch (Exception e) {
+      player.sendMessage(
+        "§cError handling configuration item: " + e.getMessage()
+      );
+      e.printStackTrace();
     }
   }
 
@@ -311,7 +297,9 @@ public class CreateActionMenu implements Menu {
         String[] parts = message.split(":", 2);
         if (parts.length == 2) {
           headers.put(parts[0].trim(), parts[1].trim());
-          player.sendMessage("§aHeader added! Enter another header or type 'done' to finish.");
+          player.sendMessage(
+            "§aHeader added! Enter another header or type 'done' to finish."
+          );
           return;
         }
         player.sendMessage("§cInvalid header format! Use 'key:value'");
@@ -324,16 +312,18 @@ public class CreateActionMenu implements Menu {
 
   private void saveAction() {
     try {
-      YamlConfiguration config = YamlConfiguration.loadConfiguration(ACTIONS_FILE);
+      YamlConfiguration config = YamlConfiguration.loadConfiguration(
+        ACTIONS_FILE
+      );
       String id = "action_" + UUID.randomUUID().toString().substring(0, 8);
-      
+
       // Create a new action map
       Map<String, Object> actionMap = new HashMap<>();
       actionMap.put("id", id);
-      actionMap.put("type", actionType.getSimpleName());
       actionMap.put("label", label);
-      actionMap.put("description", new ArrayList<>(Arrays.asList(description)));
-      
+      actionMap.put("description", description);
+      actionMap.put("type", actionType.getSimpleName());
+
       // Add action-specific fields
       String actionTypeName = actionType.getSimpleName();
       switch (actionTypeName) {
@@ -357,12 +347,14 @@ public class CreateActionMenu implements Menu {
           }
           break;
       }
-      
+
       // Get existing actions list or create new one
       @SuppressWarnings("unchecked")
-      List<Map<String, Object>> actions = (List<Map<String, Object>>) (List<?>) config.getMapList("actions");
+      List<Map<String, Object>> actions = (List<Map<String, Object>>) (List<
+          ?
+        >) config.getMapList("actions");
       actions.add(actionMap);
-      
+
       // Set the updated actions list
       config.set("actions", actions);
       config.save(ACTIONS_FILE);
@@ -370,7 +362,80 @@ public class CreateActionMenu implements Menu {
       // Reload actions after saving
       RedhookPlugin.getInstance().reloadConfigs();
     } catch (IOException e) {
-        player.sendMessage("§cError saving action: " + e.getMessage());
+      player.sendMessage("§cError saving action: " + e.getMessage());
+    }
+  }
+
+  private Map<Integer, ItemStack> getConfigurationItems() {
+    Map<Integer, ItemStack> items = new HashMap<>();
+
+    try {
+      // Create a temporary action instance to get its configuration items
+      Map<String, Object> tempMap = new HashMap<>();
+      tempMap.put("id", "temp");
+      tempMap.put("label", "temp");
+      tempMap.put("description", new String[0]);
+      tempMap.put("type", actionType.getSimpleName());
+
+      // Create the action and get its configuration items
+      RedstoneAction action = ActionFactory.create(tempMap);
+      if (action != null) {
+        Map<String, ActionConfigurationItem> configItems =
+          action.getConfigurationItems();
+
+        // Map each configuration item to a slot
+        int slot = 10;
+        for (Map.Entry<
+          String,
+          ActionConfigurationItem
+        > entry : configItems.entrySet()) {
+          String key = entry.getKey();
+          ActionConfigurationItem configItem = entry.getValue();
+
+          // Get the current value for this field
+          String currentValue = getCurrentValue(key);
+
+          // Create the item with current value
+          ItemStack item = new ItemBuilder(configItem.getIcon().getType())
+            .name(configItem.getLabel())
+            .lore(
+              "§7Current: §f" + (currentValue != null ? currentValue : "None"),
+              configItem.getDescription(),
+              "§7Click to set a new value"
+            )
+            .build();
+
+          items.put(slot++, item);
+        }
+      }
+    } catch (Exception e) {
+      player.sendMessage(
+        "§cError creating configuration items: " + e.getMessage()
+      );
+      e.printStackTrace();
+    }
+
+    return items;
+  }
+
+  private String getCurrentValue(String key) {
+    switch (key) {
+      case "command":
+        return command;
+      case "message":
+        return message;
+      case "target":
+        return target;
+      case "url":
+        return url;
+      case "method":
+        return method;
+      case "body":
+        return body;
+      case "headers":
+        return headers.isEmpty() ? null : headers.toString();
+      default:
+        return null;
     }
   }
 }
