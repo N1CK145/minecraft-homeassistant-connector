@@ -9,9 +9,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PlayerMessageAction implements RedstoneAction {
@@ -78,9 +78,21 @@ public class PlayerMessageAction implements RedstoneAction {
         String message = (String) map.get("message");
         String targetStr = (String) map.get("target");
         String label = (String) map.get("label");
-        ArrayList<String> description = (ArrayList<String>) map.get("description");
-
-        String[] descriptionArray = description == null ? new String[0] : description.toArray(new String[0]);
+        
+        Object descriptionObj = map.get("description");
+        String[] descriptionArray;
+        
+        if (descriptionObj instanceof List<?>) {
+            List<?> list = (List<?>) descriptionObj;
+            descriptionArray = list.stream()
+                .filter(obj -> obj instanceof String)
+                .map(obj -> (String) obj)
+                .toArray(String[]::new);
+        } else if (descriptionObj instanceof String) {
+            descriptionArray = new String[]{(String) descriptionObj};
+        } else {
+            descriptionArray = new String[0];
+        }
 
         return new PlayerMessageAction(id, message, targetStr, label, descriptionArray);
     }

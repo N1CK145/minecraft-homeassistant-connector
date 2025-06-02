@@ -1,6 +1,6 @@
 package io.github.n1ck145.redhook.listeners;
 
-import io.github.n1ck145.redhook.inventories.CreateActionMenu;
+import io.github.n1ck145.redhook.inventories.ActionTypeMenu;
 import io.github.n1ck145.redhook.manager.MenuManager;
 import io.github.n1ck145.redhook.utils.ItemUtil;
 import org.bukkit.entity.Player;
@@ -25,18 +25,15 @@ public class WandInteractionListener implements Listener {
 
         ItemStack item = event.getItem();
         if (item == null) {
-            player.sendMessage("§cNo item in hand!");
             return;
         }
 
         if (!ItemUtil.isWandItem(item)) {
-            player.sendMessage("§cNot a wand item!");
             return;
         }
 
         event.setCancelled(true);
-        player.sendMessage("§aOpening action creation menu...");
-        CreateActionMenu menu = new CreateActionMenu(player);
+        ActionTypeMenu menu = new ActionTypeMenu(player);
         MenuManager.openMenu(player, menu);
     }
 } 
