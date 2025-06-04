@@ -1,0 +1,64 @@
+site_name: Minecraft Redhook
+site_description: Bring Redstone to the Real World.
+site_author: N1CK145
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - search.highlight
+    - search.share
+    - content.code.copy
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      base_path: "docs/_snippets"
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - admonition
+  - footnotes
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+  # - social
+  - tags
+
+# extra:
+#   social:
+#     - icon: fontawesome/brands/github
+#       link: https://github.com/n1ck145/minecraft-redhook
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Quickstart: getting-started/quickstart.md
+    - Configuration: getting-started/configuration.md
+  - References:
+    - Actions:
+      - Player Message Action: references/actions/player-message-action.md
+      - HTTP Action: references/actions/http-action.md
+  - Developer Docs:
+    - Getting Started: developer-docs/getting-started.md
