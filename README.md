@@ -1,6 +1,6 @@
 <h1 align="center" id="title">Minecraft-Redhook</h1>
 
-<p id="description">This readme is still in build🏗️</p>
+<p id="description">Bring Redstone to the Real World! Redhook is a powerful Minecraft plugin that allows you to connect redstone signals to real-world actions through webhooks and API integrations.</p>
 
 <p align="center"><img src="https://img.shields.io/github/actions/workflow/status/N1CK145/minecraft-redhook/publish_jar.yml" alt="shields"><img src="https://img.shields.io/github/v/release/N1CK145/minecraft-redhook" alt="shields"></p>
 
