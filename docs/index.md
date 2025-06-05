@@ -84,6 +84,7 @@ Want to create custom actions? Check out our [Developer Documentation](developer
 
 - [Getting Started](getting-started/quickstart.md)
 - [Configuration Guide](getting-started/configuration.md)
+- [Docker Server Guide](getting-started/docker-server.md)
 - [Action Reference](references/actions/http-action.md)
 - [Developer Guide](developer-docs/getting-started.md)
 
