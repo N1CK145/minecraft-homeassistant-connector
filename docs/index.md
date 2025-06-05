@@ -1,6 +1,6 @@
 # Minecraft Redhook
 
-123 Bring Redstone to the Real World! Redhook is a powerful Minecraft plugin that allows you to connect redstone signals to real-world actions through webhooks and API integrations.
+Bring Redstone to the Real World! Redhook is a powerful Minecraft plugin that allows you to connect redstone signals to real-world actions through webhooks and API integrations.
 
 ## 🚀 Features
 
