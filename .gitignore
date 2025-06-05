@@ -123,3 +123,6 @@ runs/
 
 # binaries
 bin/
+
+# Documentation build
+site/
