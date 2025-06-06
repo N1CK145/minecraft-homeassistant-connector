@@ -111,48 +111,51 @@ public class CreateActionMenu implements Menu {
 
   private boolean isReadyToSave() {
     try {
-        // Create a temporary action instance to get its configuration items
-        Map<String, Object> tempMap = new HashMap<>();
-        tempMap.put("id", "temp");
-        tempMap.put("label", "temp");
-        tempMap.put("description", new String[0]);
-        tempMap.put("type", actionType.getSimpleName());
-        
-        // Add required fields based on action type
-        String actionTypeName = actionType.getSimpleName();
-        switch (actionTypeName) {
-            case "CommandAction":
-                tempMap.put("command", "");
-                break;
-            case "PlayerMessageAction":
-                tempMap.put("message", "");
-                tempMap.put("target", null);
-                break;
-            case "HttpAction":
-                tempMap.put("url", "");
-                tempMap.put("method", "GET");
-                tempMap.put("body", "");
-                tempMap.put("headers", new HashMap<String, String>());
-                break;
+      // Create a temporary action instance to get its configuration items
+      Map<String, Object> tempMap = new HashMap<>();
+      tempMap.put("id", "temp");
+      tempMap.put("label", "temp");
+      tempMap.put("description", new String[0]);
+      tempMap.put("type", actionType.getSimpleName());
+
+      // Add required fields based on action type
+      String actionTypeName = actionType.getSimpleName();
+      switch (actionTypeName) {
+        case "CommandAction":
+          tempMap.put("command", "");
+          break;
+        case "PlayerMessageAction":
+          tempMap.put("message", "");
+          tempMap.put("target", null);
+          break;
+        case "HttpAction":
+          tempMap.put("url", "");
+          tempMap.put("method", "GET");
+          tempMap.put("body", "");
+          tempMap.put("headers", new HashMap<String, String>());
+          break;
+      }
+
+      // Create the action and get its configuration items
+      RedstoneAction action = ActionFactory.create(tempMap);
+      if (action != null) {
+        Map<String, ActionConfigurationItem> configItems =
+          action.getConfigurationItems();
+
+        // Check if all required fields are set
+        for (String key : configItems.keySet()) {
+          String value = getCurrentValue(key);
+          if (value == null || value.isEmpty()) {
+            return false;
+          }
         }
-        
-        // Create the action and get its configuration items
-        RedstoneAction action = ActionFactory.create(tempMap);
-        if (action != null) {
-            Map<String, ActionConfigurationItem> configItems = action.getConfigurationItems();
-            
-            // Check if all required fields are set
-            for (String key : configItems.keySet()) {
-                String value = getCurrentValue(key);
-                if (value == null || value.isEmpty()) {
-                    return false;
-                }
-            }
-            return true;
-        }
+        return true;
+      }
     } catch (Exception e) {
-        player.sendMessage("§cError checking if ready to save: " + e.getMessage());
-        e.printStackTrace();
+      player.sendMessage(
+        "§cError checking if ready to save: " + e.getMessage()
+      );
+      e.printStackTrace();
     }
     return false;
   }
@@ -197,53 +200,63 @@ public class CreateActionMenu implements Menu {
 
   private void handleActionSpecificButton(InventoryClickEvent event) {
     try {
-        // Create a temporary action instance to get its configuration items
-        Map<String, Object> tempMap = new HashMap<>();
-        tempMap.put("id", "temp");
-        tempMap.put("label", "temp");
-        tempMap.put("description", new String[0]);
-        tempMap.put("type", actionType.getSimpleName());
-        
-        // Add required fields based on action type
-        String actionTypeName = actionType.getSimpleName();
-        switch (actionTypeName) {
-            case "CommandAction":
-                tempMap.put("command", "");
-                break;
-            case "PlayerMessageAction":
-                tempMap.put("message", "");
-                tempMap.put("target", null);
-                break;
-            case "HttpAction":
-                tempMap.put("url", "");
-                tempMap.put("method", "GET");
-                tempMap.put("body", "");
-                tempMap.put("headers", new HashMap<String, String>());
-                break;
+      // Create a temporary action instance to get its configuration items
+      Map<String, Object> tempMap = new HashMap<>();
+      tempMap.put("id", "temp");
+      tempMap.put("label", "temp");
+      tempMap.put("description", new String[0]);
+      tempMap.put("type", actionType.getSimpleName());
+
+      // Add required fields based on action type
+      String actionTypeName = actionType.getSimpleName();
+      switch (actionTypeName) {
+        case "CommandAction":
+          tempMap.put("command", "");
+          break;
+        case "PlayerMessageAction":
+          tempMap.put("message", "");
+          tempMap.put("target", null);
+          break;
+        case "HttpAction":
+          tempMap.put("url", "");
+          tempMap.put("method", "GET");
+          tempMap.put("body", "");
+          tempMap.put("headers", new HashMap<String, String>());
+          break;
+      }
+
+      // Create the action and get its configuration items
+      RedstoneAction action = ActionFactory.create(tempMap);
+      if (action != null) {
+        Map<String, ActionConfigurationItem> configItems =
+          action.getConfigurationItems();
+
+        // Find the configuration item for the clicked slot
+        int slot = event.getRawSlot();
+        int currentSlot = 10;
+        for (Map.Entry<
+          String,
+          ActionConfigurationItem
+        > entry : configItems.entrySet()) {
+          if (currentSlot == slot) {
+            String key = entry.getKey();
+            currentEditingField = key;
+            player.closeInventory();
+            player.sendMessage(
+              "§ePlease enter the " +
+              entry.getValue().getLabel().toLowerCase() +
+              " in chat:"
+            );
+            return;
+          }
+          currentSlot++;
         }
-        
-        // Create the action and get its configuration items
-        RedstoneAction action = ActionFactory.create(tempMap);
-        if (action != null) {
-            Map<String, ActionConfigurationItem> configItems = action.getConfigurationItems();
-            
-            // Find the configuration item for the clicked slot
-            int slot = event.getRawSlot();
-            int currentSlot = 10;
-            for (Map.Entry<String, ActionConfigurationItem> entry : configItems.entrySet()) {
-                if (currentSlot == slot) {
-                    String key = entry.getKey();
-                    currentEditingField = key;
-                    player.closeInventory();
-                    player.sendMessage("§ePlease enter the " + entry.getValue().getLabel().toLowerCase() + " in chat:");
-                    return;
-                }
-                currentSlot++;
-            }
-        }
+      }
     } catch (Exception e) {
-        player.sendMessage("§cError handling configuration item: " + e.getMessage());
-        e.printStackTrace();
+      player.sendMessage(
+        "§cError handling configuration item: " + e.getMessage()
+      );
+      e.printStackTrace();
     }
   }
 
@@ -355,65 +368,53 @@ public class CreateActionMenu implements Menu {
 
   private Map<Integer, ItemStack> getConfigurationItems() {
     Map<Integer, ItemStack> items = new HashMap<>();
-    
+
     try {
-        // Create a temporary action instance to get its configuration items
-        Map<String, Object> tempMap = new HashMap<>();
-        tempMap.put("id", "temp");
-        tempMap.put("label", "temp");
-        tempMap.put("description", new String[0]);
-        tempMap.put("type", actionType.getSimpleName());
-        
-        // Add required fields based on action type
-        String actionTypeName = actionType.getSimpleName();
-        switch (actionTypeName) {
-            case "CommandAction":
-                tempMap.put("command", "");
-                break;
-            case "PlayerMessageAction":
-                tempMap.put("message", "");
-                tempMap.put("target", null);
-                break;
-            case "HttpAction":
-                tempMap.put("url", "");
-                tempMap.put("method", "GET");
-                tempMap.put("body", "");
-                tempMap.put("headers", new HashMap<String, String>());
-                break;
+      // Create a temporary action instance to get its configuration items
+      Map<String, Object> tempMap = new HashMap<>();
+      tempMap.put("id", "temp");
+      tempMap.put("label", "temp");
+      tempMap.put("description", new String[0]);
+      tempMap.put("type", actionType.getSimpleName());
+
+      // Create the action and get its configuration items
+      RedstoneAction action = ActionFactory.create(tempMap);
+      if (action != null) {
+        Map<String, ActionConfigurationItem> configItems =
+          action.getConfigurationItems();
+
+        // Map each configuration item to a slot
+        int slot = 10;
+        for (Map.Entry<
+          String,
+          ActionConfigurationItem
+        > entry : configItems.entrySet()) {
+          String key = entry.getKey();
+          ActionConfigurationItem configItem = entry.getValue();
+
+          // Get the current value for this field
+          String currentValue = getCurrentValue(key);
+
+          // Create the item with current value
+          ItemStack item = new ItemBuilder(configItem.getIcon().getType())
+            .name(configItem.getLabel())
+            .lore(
+              "§7Current: §f" + (currentValue != null ? currentValue : "None"),
+              configItem.getDescription(),
+              "§7Click to set a new value"
+            )
+            .build();
+
+          items.put(slot++, item);
         }
-        
-        // Create the action and get its configuration items
-        RedstoneAction action = ActionFactory.create(tempMap);
-        if (action != null) {
-            Map<String, ActionConfigurationItem> configItems = action.getConfigurationItems();
-            
-            // Map each configuration item to a slot
-            int slot = 10;
-            for (Map.Entry<String, ActionConfigurationItem> entry : configItems.entrySet()) {
-                String key = entry.getKey();
-                ActionConfigurationItem configItem = entry.getValue();
-                
-                // Get the current value for this field
-                String currentValue = getCurrentValue(key);
-                
-                // Create the item with current value
-                ItemStack item = new ItemBuilder(configItem.getIcon().getType())
-                    .name(configItem.getLabel())
-                    .lore(
-                        "§7Current: §f" + (currentValue != null ? currentValue : "None"),
-                        configItem.getDescription(),
-                        "§7Click to set a new value"
-                    )
-                    .build();
-                
-                items.put(slot++, item);
-            }
-        }
+      }
     } catch (Exception e) {
-        player.sendMessage("§cError creating configuration items: " + e.getMessage());
-        e.printStackTrace();
+      player.sendMessage(
+        "§cError creating configuration items: " + e.getMessage()
+      );
+      e.printStackTrace();
     }
-    
+
     return items;
   }
 

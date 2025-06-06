@@ -126,3 +126,6 @@ bin/
 
 # Docker
 docker/data/
+
+# Documentation build
+site/
