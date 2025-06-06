@@ -31,16 +31,25 @@ tasks.register("copyJarIfUserMatches") {
         def jarFiles = fileTree("build/libs").include("*.jar")
         
         if (!jarFiles.isEmpty()) {
-            if (userName == "nicka") {
-                copy {
-                    from jarFiles
-                    into file("C:\\Users\\nicka\\Desktop\\MC Server\\plugins")
-                }
-            }
             if (file("docker/data").exists()) {
                 copy {
                     from jarFiles
                     into file("docker/data/plugins")
+                }
+
+                def dockerRunning = "docker ps".execute().waitFor() == 0
+                def containerRunning = "docker ps -q -f name=minecraft-redhook-dev".execute().text.trim()
+                
+                if (dockerRunning && containerRunning) {
+                    def reloadCommand = "docker exec --user 1000 minecraft-redhook-dev mc-send-to-console reload confirm"
+                    def process = reloadCommand.execute()
+                    process.waitFor()
+                    
+                    if (process.exitValue() == 0) {
+                        println "Successfully reloaded plugin dev server"
+                    } else {
+                        println "Failed to reload plugin: ${process.err.text}"
+                    }
                 }
             }
         }

@@ -1,6 +1,7 @@
 services:
   minecraft:
     image: itzg/minecraft-server
+    container_name: minecraft-redhook-dev
     ports:
       - "25565:25565"
     environment:
@@ -13,6 +14,7 @@ services:
       ENABLE_RCON: "true"
       RCON_PASSWORD: "minecraft"
       RCON_PORT: "25575"
+      CREATE_CONSOLE_IN_PIPE: "true"
     volumes:
       - ./data:/data
     tty: true
