@@ -1,42 +1,34 @@
 package io.github.n1ck145.redhook.redstoneactions;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import io.github.n1ck145.redhook.RedhookPlugin;
-import io.github.n1ck145.redhook.lib.ActionConfigurationItem;
-import io.github.n1ck145.redhook.utils.ColorMapper;
-import io.github.n1ck145.redhook.utils.ItemBuilder;
+import io.github.n1ck145.redhook.annotations.ActionField;
+import io.github.n1ck145.redhook.redstoneactions.lib.AbstractRedstoneAction;
 
-public class HttpAction implements RedstoneAction {
-    public static final String name = "WebhookAction";
+public class HttpAction extends AbstractRedstoneAction {
     private static final Material material = Material.NETHER_STAR;
-    private final String id;
-    private final String label;
-    private String[] description;
 
-    private final String url;
-    private final Map<String, String> headers;
-    private final String body;
-    private final String method;
+    @ActionField(label = "URL", description = "The URL to send the request to", icon = Material.NETHER_STAR, required = true)
+    private String url;
+
+    @ActionField(label = "Headers", description = "The headers to send with the request", icon = Material.NETHER_STAR, required = true)
+    private Map<String, String> headers;
+
+    @ActionField(label = "Body", description = "The body to send with the request", icon = Material.NETHER_STAR, required = true)
+    private String body;
+
+    @ActionField(label = "Method", description = "The method to use for the request", icon = Material.NETHER_STAR, required = true)
+    private String method;
 
 
-    public HttpAction(String id, String label, String[] description, String url, Map<String, String> headers, String body, String method) {
-        this.id = id;
-        this.label = label;
-        this.description = description;
-        this.url = url;
-        this.headers = headers;
-        this.body = body;
-        this.method = method;
+    public HttpAction(String id, String label, List<String> description) {
+        super(id, label, description, material);
     }
 
     @Override
@@ -69,84 +61,5 @@ public class HttpAction implements RedstoneAction {
                 e.printStackTrace();
             }
         });
-    }
-
-    @Override
-    public ItemStack getIcon() {
-        String title = ColorMapper.map(label);
-        String[] lore = Arrays.stream(description).map(ColorMapper::map).toArray(String[]::new);
-        return new ItemBuilder(material)
-            .name(title)
-            .lore(lore)
-            .build();
-    }
-
-    @Override
-    public Map<String, Object> serialize() {
-        Map<String, Object> map = new HashMap<>();
-        
-        map.put("id", id);
-        map.put("label", label);
-        map.put("description", description);
-
-        map.put("url", url);
-        map.put("headers", headers);
-        map.put("body", body);
-        map.put("method", method);
-
-        return map;
-    }
-
-    public static HttpAction deserialize(Map<?, ?> map) {
-        String id = (String) map.get("id");
-        String label = (String) map.get("label");
-        Object descriptionObj = map.get("description");
-        String[] descriptionArray;
-        
-        if (descriptionObj instanceof List<?>) {
-            List<?> list = (List<?>) descriptionObj;
-            descriptionArray = list.stream()
-                .filter(obj -> obj instanceof String)
-                .map(obj -> (String) obj)
-                .toArray(String[]::new);
-        } else if (descriptionObj instanceof String[]) {
-            descriptionArray = (String[]) descriptionObj;
-        } else if (descriptionObj instanceof String) {
-            descriptionArray = new String[]{(String) descriptionObj};
-        } else {
-            descriptionArray = new String[0];
-        }
-
-        String url = (String) map.get("url");
-        Map<String, String> headers = (Map<String, String>) map.get("headers");
-        String body = (String) map.get("body");
-        String method = (String) map.get("method");
-
-        return new HttpAction(id, label, descriptionArray, url, headers, body, method);
-    }
-
-    @Override
-    public Map<String, ActionConfigurationItem> getConfigurationItems() {
-        return Map.of(
-            "url", new ActionConfigurationItem(Material.NETHER_STAR, "URL", "The URL to send the webhook to", String.class),
-            "headers", new ActionConfigurationItem(Material.PAPER, "Headers", "The headers to send with the webhook", Map.class),
-            "body", new ActionConfigurationItem(Material.PAPER, "Body", "The body to send with the webhook", String.class),
-            "method", new ActionConfigurationItem(Material.PAPER, "Method", "The method to send with the webhook", String.class)
-        );
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public String getLabel() {
-        return label;
-    }
-
-    @Override
-    public String[] getDescription() {
-        return description;
     }
 }

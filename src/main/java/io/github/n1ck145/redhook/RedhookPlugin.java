@@ -14,7 +14,7 @@ import io.github.n1ck145.redhook.manager.ActionRegistry;
 import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
 import io.github.n1ck145.redhook.redstoneactions.CommandAction;
 import io.github.n1ck145.redhook.redstoneactions.PlayerMessageAction;
-import io.github.n1ck145.redhook.redstoneactions.RedstoneAction;
+import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneAction;
 import io.github.n1ck145.redhook.utils.ResponseMessage;
 import io.github.n1ck145.redhook.redstoneactions.HttpAction;
 
@@ -50,8 +50,8 @@ public final class RedhookPlugin extends JavaPlugin {
     }
 
     private void printRegisterStatus(){
-        String[] actionTypes = ActionFactory.getRegisteredActions();
-        this.getLogger().info("Registered " + actionTypes.length + " action type(s):");
+        List<String> actionTypes = ActionFactory.getRegisteredActions();
+        this.getLogger().info("Registered " + actionTypes.size() + " action type(s):");
         for (String type : actionTypes) {
             this.getLogger().info("- " + type);
         }
@@ -79,9 +79,9 @@ public final class RedhookPlugin extends JavaPlugin {
     }
 
     private void registerActionTypes() {
-        ActionFactory.register(PlayerMessageAction.class, PlayerMessageAction::deserialize);
-        ActionFactory.register(HttpAction.class, HttpAction::deserialize);
-        ActionFactory.register(CommandAction.class, CommandAction::deserialize);
+        ActionFactory.register(PlayerMessageAction.class);
+        ActionFactory.register(HttpAction.class);
+        ActionFactory.register(CommandAction.class);
     }
 
     private void loadConfigs(){
@@ -91,6 +91,8 @@ public final class RedhookPlugin extends JavaPlugin {
     }
 
     public boolean reloadConfigs(){
+        boolean success = true;
+        
         ActionRegistry.clear();
         RedstoneLinkManager.clear();
 
@@ -98,14 +100,14 @@ public final class RedhookPlugin extends JavaPlugin {
         ResponseMessage actionMessage = configManager.getActionsConfig().loadActions();
 
         if (!actionMessage.isSuccess()) {
-            this.getLogger().warning(actionMessage.getMessage());
-            return false;
+            this.getLogger().severe(actionMessage.getMessage());
+            success = false;
         }
 
         configManager.getBindingsConfig().loadBindings();
 
         RedstoneLinkManager.initialize(this);
 
-        return true;
+        return success;
     }
 }

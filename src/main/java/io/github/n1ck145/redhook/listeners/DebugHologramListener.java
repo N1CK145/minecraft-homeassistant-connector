@@ -2,7 +2,7 @@ package io.github.n1ck145.redhook.listeners;
 
 import io.github.n1ck145.redhook.RedhookPlugin;
 import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
-import io.github.n1ck145.redhook.redstoneactions.RedstoneActionInstance;
+import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneActionInstance;
 import io.github.n1ck145.redhook.utils.HologramManager;
 import io.github.n1ck145.redhook.utils.StateColor;
 import io.github.n1ck145.redhook.utils.ItemUtil;

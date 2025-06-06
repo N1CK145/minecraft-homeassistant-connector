@@ -3,7 +3,7 @@ package io.github.n1ck145.redhook.inventories;
 import io.github.n1ck145.redhook.RedhookPlugin;
 import io.github.n1ck145.redhook.lib.ActionConfigurationItem;
 import io.github.n1ck145.redhook.manager.ActionFactory;
-import io.github.n1ck145.redhook.redstoneactions.RedstoneAction;
+import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneAction;
 import io.github.n1ck145.redhook.utils.ItemBuilder;
 import java.io.File;
 import java.io.IOException;
