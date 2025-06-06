@@ -8,13 +8,21 @@ services:
       EULA: "TRUE"
       TYPE: "PAPER"
       VERSION: "1.21.4"
-      MEMORY: "2G"
-      DIFFICULTY: "normal"
+      MEMORY: "4G"
+      CREATE_CONSOLE_IN_PIPE: "true"
+      
       MOTD: "RedHook Development Server"
+      
       ENABLE_RCON: "true"
       RCON_PASSWORD: "minecraft"
       RCON_PORT: "25575"
-      CREATE_CONSOLE_IN_PIPE: "true"
+      
+      # World settings
+      DIFFICULTY: peaceful
+      LEVEL_TYPE: FLAT
+      ALLOW_FLIGHT: true
+      MODE: creative
+    
     volumes:
       - ./data:/data
     tty: true
