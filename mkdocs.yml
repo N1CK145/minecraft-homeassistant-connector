@@ -62,3 +62,4 @@ nav:
       - HTTP Action: references/actions/http-action.md
   - Developer Docs:
     - Getting Started: developer-docs/getting-started.md
+    - Docker Server: developer-docs/docker-server.md

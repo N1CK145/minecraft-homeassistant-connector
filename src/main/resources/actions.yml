@@ -10,3 +10,9 @@ actions:
     label: "Private Message"
     message: "Hello!"
     target: YOUR_NAME
+
+  - id: time_day
+    type: CommandAction
+    label: "Set Time to Day"
+    description: ["Sets the time to day"]
+    command: "time set day"

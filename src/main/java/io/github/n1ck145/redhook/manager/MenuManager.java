@@ -1,6 +1,5 @@
 package io.github.n1ck145.redhook.manager;
 
-import io.github.n1ck145.redhook.inventories.AbstractPaginatedMenu;
 import io.github.n1ck145.redhook.inventories.Menu;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -46,5 +45,12 @@ public class MenuManager {
      */
     public static boolean hasMenu(Player player) {
         return openMenus.containsKey(player.getUniqueId());
+    }
+
+    /**
+     * Gets the current menu for a player.
+     */
+    public static Menu getCurrentMenu(Player player) {
+        return openMenus.get(player.getUniqueId());
     }
 }

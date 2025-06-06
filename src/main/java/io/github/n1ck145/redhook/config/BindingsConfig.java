@@ -1,8 +1,9 @@
 package io.github.n1ck145.redhook.config;
 
 import io.github.n1ck145.redhook.manager.ActionRegistry;
-import io.github.n1ck145.redhook.redstoneactions.RedstoneActionInstance;
-import io.github.n1ck145.redhook.redstoneactions.TriggerCondition;
+import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneActionInstance;
+import io.github.n1ck145.redhook.redstoneactions.lib.TriggerCondition;
+
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

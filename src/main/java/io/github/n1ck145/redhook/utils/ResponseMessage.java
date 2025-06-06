@@ -24,4 +24,8 @@ public class ResponseMessage {
     public boolean isSuccess(){
         return success;
     }
+
+    public String getMessage(){
+        return message;
+    }
 }

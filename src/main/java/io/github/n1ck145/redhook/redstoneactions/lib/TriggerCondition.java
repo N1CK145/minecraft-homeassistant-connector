@@ -1,4 +1,4 @@
-package io.github.n1ck145.redhook.redstoneactions;
+package io.github.n1ck145.redhook.redstoneactions.lib;
 
 public enum TriggerCondition {
     ON,     // Triggered when redstone turns ON

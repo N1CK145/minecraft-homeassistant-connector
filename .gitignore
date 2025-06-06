@@ -124,5 +124,8 @@ runs/
 # binaries
 bin/
 
+# Docker
+docker/data/
+
 # Documentation build
 site/

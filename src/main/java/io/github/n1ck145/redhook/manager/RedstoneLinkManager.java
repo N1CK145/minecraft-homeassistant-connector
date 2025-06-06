@@ -1,9 +1,9 @@
 package io.github.n1ck145.redhook.manager;
 
 import io.github.n1ck145.redhook.config.BindingsConfig;
-import io.github.n1ck145.redhook.redstoneactions.RedstoneAction;
-import io.github.n1ck145.redhook.redstoneactions.RedstoneActionInstance;
-import io.github.n1ck145.redhook.redstoneactions.TriggerCondition;
+import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneAction;
+import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneActionInstance;
+import io.github.n1ck145.redhook.redstoneactions.lib.TriggerCondition;
 import io.github.n1ck145.redhook.utils.ResponseMessage;
 
 import org.bukkit.Location;

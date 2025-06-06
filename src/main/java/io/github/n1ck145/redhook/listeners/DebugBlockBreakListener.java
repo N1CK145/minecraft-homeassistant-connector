@@ -16,9 +16,11 @@ import org.bukkit.persistence.PersistentDataType;
 
 import io.github.n1ck145.redhook.RedhookPlugin;
 import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
-import io.github.n1ck145.redhook.redstoneactions.RedstoneActionInstance;
+import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneActionInstance;
+import io.github.n1ck145.redhook.utils.ItemUtil;
+import io.github.n1ck145.redhook.utils.StateColor;
 
-public class BlockBreakListener implements Listener {
+public class DebugBlockBreakListener implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
@@ -30,7 +32,7 @@ public class BlockBreakListener implements Listener {
             return;
         }
 
-        if(isDebugItem(player.getInventory().getItemInMainHand())){
+        if(ItemUtil.isDebugItem(player.getInventory().getItemInMainHand())){
             event.setCancelled(true);
             debug(block, player);
             return;
@@ -59,18 +61,6 @@ public class BlockBreakListener implements Listener {
         return value != null && value == 1;
     }
 
-    private boolean isDebugItem(ItemStack item) {
-        if (item == null || !item.hasItemMeta()) {
-            return false;
-        }
-
-        ItemMeta meta = item.getItemMeta();
-        NamespacedKey key = new NamespacedKey("redhook", "debug");
-
-        Byte value = meta.getPersistentDataContainer().get(key, PersistentDataType.BYTE);
-        return value != null && value == 1;
-    }
-
     private void debug(Block block, Player player) {
         ArrayList<RedstoneActionInstance> instances = RedstoneLinkManager.getActionInstances(block);
         if(instances == null || instances.isEmpty()){
@@ -82,13 +72,7 @@ public class BlockBreakListener implements Listener {
         player.sendMessage(RedhookPlugin.getPrefix() + "Total Actions: §7" + instances.size());
 
         for(RedstoneActionInstance instance : instances){
-            String colorCode = "§r";
-
-            switch(instance.getTriggerCondition()){
-                case ON -> colorCode = "§2";
-                case OFF -> colorCode = "§4";
-                case BOTH -> colorCode = "§9";
-            }
+            String colorCode = StateColor.valueOf(instance.getTriggerCondition().name()).getColorCode();
             
             Map<String, Object> actionData = instance.getAction().serialize();
             actionData.remove("id");
