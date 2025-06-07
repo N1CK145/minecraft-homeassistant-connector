@@ -41,11 +41,10 @@ tasks.register("copyJarIfUserMatches") {
                 def containerRunning = "docker ps -q -f name=minecraft-redhook-dev".execute().text.trim()
                 
                 if (dockerRunning && containerRunning) {
-                    def reloadCommand = "docker exec --user 1000 minecraft-redhook-dev mc-send-to-console reload confirm"
-                    def process = reloadCommand.execute()
-                    process.waitFor()
+                    def messageCommand = "docker exec --user 1000 minecraft-redhook-dev mc-send-to-console say Gradle: Reloading server...".execute().waitFor() == 0
+                    def reloadCommand = "docker exec --user 1000 minecraft-redhook-dev mc-send-to-console reload confirm".execute().waitFor() == 0
                     
-                    if (process.exitValue() == 0) {
+                    if (messageCommand && reloadCommand) {
                         println "Successfully reloaded plugin dev server"
                     } else {
                         println "Failed to reload plugin: ${process.err.text}"
