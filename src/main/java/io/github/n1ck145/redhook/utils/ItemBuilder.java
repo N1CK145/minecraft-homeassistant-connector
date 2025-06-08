@@ -99,6 +99,16 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder addGlint() {
+        withMeta(meta -> meta.setEnchantmentGlintOverride(true));
+        return this;
+    }
+
+    public ItemBuilder removeGlint() {
+        withMeta(meta -> meta.setEnchantmentGlintOverride(false));
+        return this;
+    }
+
     public ItemBuilder color(final Color color) {
         if (item.getItemMeta() instanceof LeatherArmorMeta meta) {
             meta.setColor(color);

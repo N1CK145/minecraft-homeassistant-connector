@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import io.github.n1ck145.redhook.RedhookPlugin;
+import io.github.n1ck145.redhook.inventories.lib.Menu;
 import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
 
 public class ActionTriggerMenu implements Menu {
@@ -31,9 +32,11 @@ public class ActionTriggerMenu implements Menu {
         this.player = player;
         this.selectedBlock = selectedBlock;
         this.action = action;
-        
+
         ArrayList<RedstoneActionInstance> actionInstances = RedstoneLinkManager.getActionInstances(selectedBlock);
-        currentActionInstance = actionInstances == null ? null : actionInstances.stream().filter(instance -> instance.getAction().equals(action)).findFirst().orElse(null);
+        currentActionInstance = actionInstances == null ? null
+                : actionInstances.stream().filter(instance -> instance.getAction().equals(action)).findFirst()
+                        .orElse(null);
     }
 
     public void open() {
@@ -47,35 +50,35 @@ public class ActionTriggerMenu implements Menu {
         player.openInventory(inv);
     }
 
-    private void setBackground(Inventory inv){
-        for(int i = 0; i < inv.getSize(); i++){
-            if(inv.getItem(i) == null){
+    private void setBackground(Inventory inv) {
+        for (int i = 0; i < inv.getSize(); i++) {
+            if (inv.getItem(i) == null) {
                 inv.setItem(i, createButton(Material.GRAY_STAINED_GLASS_PANE, "§7"));
             }
         }
     }
 
-    private void setNavigation(Inventory inv){
+    private void setNavigation(Inventory inv) {
         inv.setItem(0, createButton(Material.ARROW, "§cBack"));
         inv.setItem(8, createButton(Material.NAME_TAG, "§e" + action.getId()));
     }
 
-    private void setActions(Inventory inv){
+    private void setActions(Inventory inv) {
         inv.setItem(9 + 1, createButton(Material.REDSTONE_TORCH, "§aON"));
         inv.setItem(9 + 3, createButton(Material.LEVER, "§aOFF"));
         inv.setItem(9 + 5, createButton(Material.REDSTONE_BLOCK, "§aBOTH"));
         inv.setItem(9 + 7, createButton(Material.BARRIER, "§4DISABLED"));
     }
 
-    private void setIndicators(Inventory inv){
+    private void setIndicators(Inventory inv) {
         boolean[] states = new boolean[4];
 
-        if(currentActionInstance == null){
+        if (currentActionInstance == null) {
             states[0] = false;
             states[1] = false;
             states[2] = false;
             states[3] = true;
-        }else{
+        } else {
             TriggerCondition trigger = currentActionInstance.getTriggerCondition();
             states[0] = trigger == TriggerCondition.ON;
             states[1] = trigger == TriggerCondition.OFF;
@@ -83,10 +86,10 @@ public class ActionTriggerMenu implements Menu {
             states[3] = false;
         }
 
-        for(int i = 0; i < states.length; i++){
-            if(states[i]){
+        for (int i = 0; i < states.length; i++) {
+            if (states[i]) {
                 inv.setItem(19 + (2 * i), createButton(Material.GREEN_STAINED_GLASS_PANE, "§aON"));
-            }else{
+            } else {
                 inv.setItem(19 + (2 * i), createButton(Material.RED_STAINED_GLASS_PANE, "§cOFF"));
             }
         }
@@ -104,7 +107,8 @@ public class ActionTriggerMenu implements Menu {
 
     public void handleClick(InventoryClickEvent event) {
 
-        if (!event.getView().getTitle().equals("§6Select Trigger")) return;
+        if (!event.getView().getTitle().equals("§6Select Trigger"))
+            return;
         event.setCancelled(true);
 
         int slot = event.getRawSlot();
@@ -115,7 +119,7 @@ public class ActionTriggerMenu implements Menu {
             case 9 + 3 -> trigger = TriggerCondition.OFF;
             case 9 + 5 -> trigger = TriggerCondition.BOTH;
             case 9 + 7 -> {
-                if(currentActionInstance == null){
+                if (currentActionInstance == null) {
                     player.sendMessage(RedhookPlugin.getPrefix() + "§cNo action bound to this block");
                     player.playNote(player.getLocation(), Instrument.BASS_GUITAR, Note.natural(0, Note.Tone.C));
                     return;
@@ -134,11 +138,10 @@ public class ActionTriggerMenu implements Menu {
 
         // Bind with trigger
         ResponseMessage response = RedstoneLinkManager.bindBlock(selectedBlock, action, trigger);
-        if(!response.isSuccess()){
+        if (!response.isSuccess()) {
             response.send(player);
             player.playNote(player.getLocation(), Instrument.BASS_GUITAR, Note.natural(0, Note.Tone.C));
-        }
-        else{
+        } else {
             response.send(player);
             player.playNote(player.getLocation(), Instrument.PLING, Note.natural(1, Note.Tone.C));
             player.closeInventory();

@@ -1,6 +1,8 @@
 package io.github.n1ck145.redhook.manager;
 
-import io.github.n1ck145.redhook.inventories.Menu;
+import io.github.n1ck145.redhook.inventories.lib.Menu;
+import io.github.n1ck145.redhook.utils.PlayerState;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -24,7 +26,8 @@ public class MenuManager {
      * Handles clicks in a menu if one is registered for the player.
      */
     public static void handleClick(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player player)) return;
+        if (!(event.getWhoClicked() instanceof Player player))
+            return;
 
         Menu menu = openMenus.get(player.getUniqueId());
         if (menu != null) {
@@ -36,7 +39,15 @@ public class MenuManager {
      * Unregisters the menu when the inventory is closed.
      */
     public static void handleClose(InventoryCloseEvent event) {
-        if (!(event.getPlayer() instanceof Player player)) return;
+        if (!(event.getPlayer() instanceof Player player))
+            return;
+
+        Boolean persistInventoryState = PlayerStateManager.getPlayerState(player,
+                PlayerState.REDHOOK_PERSIST_INVENTORY_STATE, false);
+
+        if (persistInventoryState)
+            return;
+
         openMenus.remove(player.getUniqueId());
     }
 

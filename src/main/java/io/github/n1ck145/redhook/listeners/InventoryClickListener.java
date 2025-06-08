@@ -1,7 +1,7 @@
 package io.github.n1ck145.redhook.listeners;
 
-import io.github.n1ck145.redhook.inventories.CreateActionMenu;
 import io.github.n1ck145.redhook.manager.MenuManager;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,14 +17,9 @@ public class InventoryClickListener implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        if (event.getPlayer() instanceof Player) {
-            // Don't unregister the menu if it's a CreateActionMenu waiting for chat input
-            if (MenuManager.getCurrentMenu((Player) event.getPlayer()) instanceof CreateActionMenu menu) {
-                if (menu.getCurrentEditingField() != null) {
-                    return;
-                }
-            }
-            MenuManager.handleClose(event);
-        }
+        if (!(event.getPlayer() instanceof Player))
+            return;
+
+        MenuManager.handleClose(event);
     }
 }

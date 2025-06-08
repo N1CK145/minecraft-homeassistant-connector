@@ -1,8 +1,7 @@
 package io.github.n1ck145.redhook.inventories;
 
-import io.github.n1ck145.redhook.manager.ActionRegistry;
+import io.github.n1ck145.redhook.inventories.lib.AbstractPaginatedMenu;
 import io.github.n1ck145.redhook.manager.MenuManager;
-import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
 import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneAction;
 
 import org.bukkit.block.Block;

@@ -1,441 +1,207 @@
 package io.github.n1ck145.redhook.inventories;
 
 import io.github.n1ck145.redhook.RedhookPlugin;
+import io.github.n1ck145.redhook.config.ActionsConfig;
+import io.github.n1ck145.redhook.inventories.lib.AbstractPaginatedMenu;
 import io.github.n1ck145.redhook.lib.ActionConfigurationItem;
 import io.github.n1ck145.redhook.manager.ActionFactory;
+import io.github.n1ck145.redhook.manager.ActionRegistry;
+import io.github.n1ck145.redhook.manager.MenuManager;
+import io.github.n1ck145.redhook.manager.PlayerStateManager;
 import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneAction;
+import io.github.n1ck145.redhook.redstoneactions.lib.ValidationResult;
 import io.github.n1ck145.redhook.utils.ItemBuilder;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
+import io.github.n1ck145.redhook.utils.PlayerState;
+import it.unimi.dsi.fastutil.Arrays;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import org.bukkit.Bukkit;
+
+import org.bukkit.Instrument;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.Note;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-public class CreateActionMenu implements Menu {
+public class CreateActionMenu extends AbstractPaginatedMenu<ActionConfigurationItem> {
+  private static final String TITLE = RedhookPlugin.getPrefix() + "Configure Action";
+  private ActionConfigurationItem currentEditingItem;
+  private final RedstoneAction action;
 
-  private final Player player;
-  private String label;
-  private String description;
-  private String command;
-  private String message;
-  private String target;
-  private String url;
-  private String method;
-  private String body;
-  private Map<String, String> headers;
-  private final Class<? extends RedstoneAction> actionType;
-  private static final String TITLE = "§6Configure Action";
-  private String currentEditingField = null;
-  private static final File ACTIONS_FILE = new File(
-    "plugins/Redhook/actions.yml"
-  );
+  public CreateActionMenu(Player player, RedstoneAction action) {
+    super(player, new ArrayList<>(action.getConfigurationItems().keySet().stream()
+        .filter(item -> !item.isHidden())
+        .toList()));
+    this.action = action;
 
-  //public CreateActionMenu(Player player) {
-  // this(player, ActionType.COMMAND);
-  //}
-
-  public CreateActionMenu(
-    Player player,
-    Class<? extends RedstoneAction> actionType
-  ) {
-    this.player = player;
-    this.actionType = actionType;
-    this.command = "";
-    this.message = "";
-    this.target = "";
-    this.url = "";
-    this.method = "GET";
-    this.body = "";
-    this.headers = new HashMap<>();
-  }
-
-  public String getCurrentEditingField() {
-    return currentEditingField;
+    PlayerStateManager.setPlayerState(player, PlayerState.REDHOOK_PERSIST_INVENTORY_STATE, true);
   }
 
   @Override
-  public void open() {
-    Inventory inv = Bukkit.createInventory(null, 36, TITLE);
-
-    // Set background
-    ItemStack background = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
-      .name(" ")
-      .build();
-
-    for (int i = 0; i < inv.getSize(); i++) {
-      inv.setItem(i, background);
-    }
-
-    // Action buttons
-    ItemStack labelButton = new ItemBuilder(Material.NAME_TAG)
-      .name("§eSet Label")
-      .lore(
-        "§7Current: §f" + (label != null ? label : "None"),
-        "§7Click to set a new label"
-      )
-      .build();
-    inv.setItem(2, labelButton);
-
-    ItemStack descButton = new ItemBuilder(Material.BOOK)
-      .name("§eSet Description")
-      .lore(
-        "§7Current: §f" + (description != null ? description : "None"),
-        "§7Click to set a new description"
-      )
-      .build();
-    inv.setItem(4, descButton);
-
-    ItemStack saveButton = new ItemBuilder(Material.EMERALD_BLOCK)
-      .name("§aSave Action")
-      .lore(
-        "§7Click to save this action",
-        isReadyToSave() ? "§aReady to save!" : "§cRequired fields not set!"
-      )
-      .build();
-    inv.setItem(6, saveButton);
-
-    // Get position of the action
-    Map<Integer, ItemStack> configItems = getConfigurationItems();
-    configItems.forEach(inv::setItem);
-
-    player.openInventory(inv);
+  protected String getTitle() {
+    return TITLE;
   }
 
-  private boolean isReadyToSave() {
-    try {
-      // Create a temporary action instance to get its configuration items
-      Map<String, Object> tempMap = new HashMap<>();
-      tempMap.put("id", "temp");
-      tempMap.put("label", "temp");
-      tempMap.put("description", new String[0]);
-      tempMap.put("type", actionType.getSimpleName());
+  @Override
+  protected ItemStack getItemRepresentation(ActionConfigurationItem item) {
+    List<String> lore = new ArrayList<>();
+    lore.addAll(item.getDescription());
+    lore.add("");
+    lore.add("§7Current Value: §e" + item.toString());
+    lore.add("§7Value Type: §e" + (item.getValueType().getSimpleName()));
+    lore.add("§7Required: " + (item.isRequired() ? "§aYes" : "§cNo"));
 
-      // Add required fields based on action type
-      String actionTypeName = actionType.getSimpleName();
-      switch (actionTypeName) {
-        case "CommandAction":
-          tempMap.put("command", "");
-          break;
-        case "PlayerMessageAction":
-          tempMap.put("message", "");
-          tempMap.put("target", null);
-          break;
-        case "HttpAction":
-          tempMap.put("url", "");
-          tempMap.put("method", "GET");
-          tempMap.put("body", "");
-          tempMap.put("headers", new HashMap<String, String>());
-          break;
-      }
+    ItemBuilder builder = new ItemBuilder(item.getMaterial())
+        .name("§7" + item.getLabel())
+        .lore(lore);
 
-      // Create the action and get its configuration items
-      RedstoneAction action = ActionFactory.create(tempMap);
-      if (action != null) {
-        Map<String, ActionConfigurationItem> configItems =
-          action.getConfigurationItems();
+    if (item.getValue() != null)
+      builder.addGlint();
 
-        // Check if all required fields are set
-        for (String key : configItems.keySet()) {
-          String value = getCurrentValue(key);
-          if (value == null || value.isEmpty()) {
-            return false;
-          }
-        }
-        return true;
-      }
-    } catch (Exception e) {
-      player.sendMessage(
-        "§cError checking if ready to save: " + e.getMessage()
-      );
-      e.printStackTrace();
-    }
-    return false;
+    return builder.build();
   }
 
   @Override
   public void handleClick(InventoryClickEvent event) {
-    if (!event.getView().getTitle().equals(TITLE)) return;
-    event.setCancelled(true);
+    super.handleClick(event);
 
-    int slot = event.getRawSlot();
-    ItemStack clickedItem = event.getCurrentItem();
-    Map<Integer, ItemStack> configItems = getConfigurationItems();
-
-    switch (slot) {
-      case 2: // Label button
-        currentEditingField = "label";
-        player.closeInventory();
-        player.sendMessage("§ePlease enter the label in chat:");
-        break;
-      case 4: // Description button
-        currentEditingField = "description";
-        player.closeInventory();
-        player.sendMessage("§ePlease enter the description in chat:");
-        break;
-      case 6: // Save button
-        if (!isReadyToSave()) {
-          player.sendMessage("§cRequired fields are not set!");
-          return;
-        }
-        saveAction();
-        player.closeInventory();
-        player.sendMessage("§aAction saved successfully!");
-        break;
-      default:
-        // Check if the clicked slot contains a configuration item
-        if (configItems.containsKey(slot) && clickedItem != null) {
-          handleActionSpecificButton(event);
-        }
-        break;
-    }
+    boolean lastSlotClicked = event.getRawSlot() == inventory.getSize() - 1;
+    if (lastSlotClicked)
+      submitAction();
   }
 
-  private void handleActionSpecificButton(InventoryClickEvent event) {
-    try {
-      // Create a temporary action instance to get its configuration items
-      Map<String, Object> tempMap = new HashMap<>();
-      tempMap.put("id", "temp");
-      tempMap.put("label", "temp");
-      tempMap.put("description", new String[0]);
-      tempMap.put("type", actionType.getSimpleName());
+  @Override
+  protected void onItemClick(ActionConfigurationItem item) {
+    player.sendMessage(RedhookPlugin.getPrefix() + "§8===== §6Chat input commands §8=====");
+    player.sendMessage(RedhookPlugin.getPrefix());
+    player.sendMessage(RedhookPlugin.getPrefix() + "§7:q §8- §rQuit edit dialog");
+    player.sendMessage(RedhookPlugin.getPrefix() + "§7:clear §8- §rClears the value from the item");
+    player.sendMessage(RedhookPlugin.getPrefix());
 
-      // Add required fields based on action type
-      String actionTypeName = actionType.getSimpleName();
-      switch (actionTypeName) {
-        case "CommandAction":
-          tempMap.put("command", "");
-          break;
-        case "PlayerMessageAction":
-          tempMap.put("message", "");
-          tempMap.put("target", null);
-          break;
-        case "HttpAction":
-          tempMap.put("url", "");
-          tempMap.put("method", "GET");
-          tempMap.put("body", "");
-          tempMap.put("headers", new HashMap<String, String>());
-          break;
-      }
+    player
+        .sendMessage(RedhookPlugin.getPrefix() + "§aEnter a §e" + item.getValueType().getSimpleName() + " §afor §e"
+            + item.getLabel());
 
-      // Create the action and get its configuration items
-      RedstoneAction action = ActionFactory.create(tempMap);
-      if (action != null) {
-        Map<String, ActionConfigurationItem> configItems =
-          action.getConfigurationItems();
+    currentEditingItem = item;
+    player.closeInventory();
+  }
 
-        // Find the configuration item for the clicked slot
-        int slot = event.getRawSlot();
-        int currentSlot = 10;
-        for (Map.Entry<
-          String,
-          ActionConfigurationItem
-        > entry : configItems.entrySet()) {
-          if (currentSlot == slot) {
-            String key = entry.getKey();
-            currentEditingField = key;
-            player.closeInventory();
-            player.sendMessage(
-              "§ePlease enter the " +
-              entry.getValue().getLabel().toLowerCase() +
-              " in chat:"
-            );
-            return;
-          }
-          currentSlot++;
-        }
-      }
-    } catch (Exception e) {
-      player.sendMessage(
-        "§cError handling configuration item: " + e.getMessage()
-      );
-      e.printStackTrace();
+  @Override
+  protected void renderPage() {
+    super.renderPage();
+
+    ValidationResult validation = action.validate();
+
+    ItemBuilder builder = new ItemBuilder(validation.isValid() ? Material.LIME_WOOL : Material.RED_WOOL);
+
+    if (validation.isValid()) {
+      builder.addGlint();
+      builder.name("§aPublish action");
+    } else {
+      builder.name("§cInvalid action configuration");
+      builder.lore(validation.getErrorMessage());
     }
+
+    inventory.setItem(inventory.getSize() - 1, builder.build());
   }
 
   public void handleChatInput(String message) {
-    if (currentEditingField == null) return;
+    if (currentEditingItem == null)
+      return;
 
-    switch (currentEditingField) {
-      case "label":
-        this.label = message;
-        break;
-      case "description":
-        this.description = message;
-        break;
-      case "command":
-        this.command = message;
-        break;
-      case "message":
-        this.message = message;
-        break;
-      case "target":
-        this.target = message;
-        break;
-      case "url":
-        this.url = message;
-        break;
-      case "method":
-        this.method = message.toUpperCase();
-        break;
-      case "body":
-        this.body = message;
-        break;
-      case "headers":
-        if (message.equalsIgnoreCase("done")) {
-          currentEditingField = null;
-          open();
-          return;
+    // Quit edit dialog
+    if (message.equals(":q")) {
+      currentEditingItem = null;
+      player.sendMessage(RedhookPlugin.getPrefix() + "§cCanceled");
+      MenuManager.openMenu(player, this);
+      return;
+    } else if (message.equals(":clear")) {
+      currentEditingItem.setValue(null);
+      currentEditingItem = null;
+      player.sendMessage(RedhookPlugin.getPrefix() + "§aCleared!");
+      MenuManager.openMenu(player, this);
+      return;
+    }
+
+    boolean valueComplete = false;
+
+    if (currentEditingItem.getValueType() == String.class) {
+      currentEditingItem.setValue(message);
+      valueComplete = true;
+    } else if (currentEditingItem.getValueType() == Integer.class) {
+      try {
+        currentEditingItem.setValue(Integer.parseInt(message));
+        valueComplete = true;
+      } catch (NumberFormatException e) {
+        player.sendMessage(RedhookPlugin.getPrefix() + "§cInvalid number");
+      }
+    } else if (currentEditingItem.getValueType() == Boolean.class) {
+      try {
+        currentEditingItem.setValue(Boolean.parseBoolean(message));
+        valueComplete = true;
+      } catch (IllegalArgumentException e) {
+        player.sendMessage(RedhookPlugin.getPrefix() + "§cInvalid value. Use true or false");
+      }
+    } else if (List.class.isAssignableFrom(currentEditingItem.getValueType())) {
+      if (message.equalsIgnoreCase(":wq")) {
+        valueComplete = true;
+      } else {
+        List<String> currentList = (List<String>) currentEditingItem.getValue();
+        if (currentList == null) {
+          currentList = new ArrayList<>();
         }
-        String[] parts = message.split(":", 2);
-        if (parts.length == 2) {
-          headers.put(parts[0].trim(), parts[1].trim());
-          player.sendMessage(
-            "§aHeader added! Enter another header or type 'done' to finish."
-          );
-          return;
-        }
-        player.sendMessage("§cInvalid header format! Use 'key:value'");
+        currentList.add(message.trim());
+        currentEditingItem.setValue(currentList);
+        player.sendMessage(
+            RedhookPlugin.getPrefix() + "§aAdded §6'" + message.trim()
+                + "'§a to list. Type §6':wq'§a when finished.");
+      }
+    }
+
+    if (valueComplete) {
+      updateFieldValue(currentEditingItem);
+
+      player.sendMessage(RedhookPlugin.getPrefix() + "§6" + currentEditingItem.getLabel() + "§a set to §6"
+          + currentEditingItem.getValue());
+
+      currentEditingItem = null;
+      MenuManager.openMenu(player, this);
+    }
+  }
+
+  private void updateFieldValue(ActionConfigurationItem configurationItem) {
+    try {
+      Field field = action.getConfigurationItems().get(configurationItem);
+
+      if (field == null) {
         return;
-    }
-
-    currentEditingField = null;
-    open();
-  }
-
-  private void saveAction() {
-    try {
-      YamlConfiguration config = YamlConfiguration.loadConfiguration(
-        ACTIONS_FILE
-      );
-      String id = "action_" + UUID.randomUUID().toString().substring(0, 8);
-
-      // Create a new action map
-      Map<String, Object> actionMap = new HashMap<>();
-      actionMap.put("id", id);
-      actionMap.put("label", label);
-      actionMap.put("description", description);
-      actionMap.put("type", actionType.getSimpleName());
-
-      // Add action-specific fields
-      String actionTypeName = actionType.getSimpleName();
-      switch (actionTypeName) {
-        case "CommandAction":
-          actionMap.put("command", command);
-          break;
-        case "PlayerMessageAction":
-          actionMap.put("message", message);
-          if (!target.isEmpty()) {
-            actionMap.put("target", target);
-          }
-          break;
-        case "HttpAction":
-          actionMap.put("url", url);
-          actionMap.put("method", method);
-          if (!body.isEmpty()) {
-            actionMap.put("body", body);
-          }
-          if (!headers.isEmpty()) {
-            actionMap.put("headers", headers);
-          }
-          break;
       }
-
-      // Get existing actions list or create new one
-      @SuppressWarnings("unchecked")
-      List<Map<String, Object>> actions = (List<Map<String, Object>>) (List<
-          ?
-        >) config.getMapList("actions");
-      actions.add(actionMap);
-
-      // Set the updated actions list
-      config.set("actions", actions);
-      config.save(ACTIONS_FILE);
-
-      // Reload actions after saving
-      RedhookPlugin.getInstance().reloadConfigs();
-    } catch (IOException e) {
-      player.sendMessage("§cError saving action: " + e.getMessage());
-    }
-  }
-
-  private Map<Integer, ItemStack> getConfigurationItems() {
-    Map<Integer, ItemStack> items = new HashMap<>();
-
-    try {
-      // Create a temporary action instance to get its configuration items
-      Map<String, Object> tempMap = new HashMap<>();
-      tempMap.put("id", "temp");
-      tempMap.put("label", "temp");
-      tempMap.put("description", new String[0]);
-      tempMap.put("type", actionType.getSimpleName());
-
-      // Create the action and get its configuration items
-      RedstoneAction action = ActionFactory.create(tempMap);
-      if (action != null) {
-        Map<String, ActionConfigurationItem> configItems =
-          action.getConfigurationItems();
-
-        // Map each configuration item to a slot
-        int slot = 10;
-        for (Map.Entry<
-          String,
-          ActionConfigurationItem
-        > entry : configItems.entrySet()) {
-          String key = entry.getKey();
-          ActionConfigurationItem configItem = entry.getValue();
-
-          // Get the current value for this field
-          String currentValue = getCurrentValue(key);
-
-          // Create the item with current value
-          ItemStack item = new ItemBuilder(configItem.getIcon().getType())
-            .name(configItem.getLabel())
-            .lore(
-              "§7Current: §f" + (currentValue != null ? currentValue : "None"),
-              configItem.getDescription(),
-              "§7Click to set a new value"
-            )
-            .build();
-
-          items.put(slot++, item);
-        }
-      }
-    } catch (Exception e) {
-      player.sendMessage(
-        "§cError creating configuration items: " + e.getMessage()
-      );
+      field.set(action, configurationItem.getValue());
+    } catch (IllegalAccessException e) {
       e.printStackTrace();
     }
-
-    return items;
   }
 
-  private String getCurrentValue(String key) {
-    switch (key) {
-      case "command":
-        return command;
-      case "message":
-        return message;
-      case "target":
-        return target;
-      case "url":
-        return url;
-      case "method":
-        return method;
-      case "body":
-        return body;
-      case "headers":
-        return headers.isEmpty() ? null : headers.toString();
-      default:
-        return null;
+  private void submitAction() {
+    ValidationResult result = action.validate();
+
+    if (!result.isValid()) {
+      player.sendMessage(RedhookPlugin.getPrefix() + "§c" + result.getErrorMessage());
+      player.playNote(player.getLocation(), Instrument.BASS_GUITAR, Note.natural(0, Note.Tone.C));
+      return;
     }
+
+    String actionId = action.getId();
+    String actionLabel = action.getLabel();
+    ActionRegistry.register(action);
+    player.sendMessage(RedhookPlugin.getPrefix() + "§aAction created successfully!");
+    player.sendMessage(RedhookPlugin.getPrefix() + "§7ID: §6" + actionId + " §7Label: §6" + actionLabel);
+    player.playNote(player.getLocation(), Instrument.PLING, Note.natural(1, Note.Tone.C));
+    PlayerStateManager.removePlayerState(player, PlayerState.REDHOOK_PERSIST_INVENTORY_STATE);
+    player.closeInventory();
+
+    RedhookPlugin.getInstance().saveConfig();
   }
 }

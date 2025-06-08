@@ -27,12 +27,12 @@ public class DebugBlockBreakListener implements Listener {
         Block block = event.getBlock();
         Player player = event.getPlayer();
         Location location = block.getLocation();
-        
-        if(isWandItem(player.getInventory().getItemInMainHand())){
+
+        if (isWandItem(player.getInventory().getItemInMainHand())) {
             return;
         }
 
-        if(ItemUtil.isDebugItem(player.getInventory().getItemInMainHand())){
+        if (ItemUtil.isDebugItem(player.getInventory().getItemInMainHand())) {
             event.setCancelled(true);
             debug(block, player);
             return;
@@ -44,7 +44,8 @@ public class DebugBlockBreakListener implements Listener {
                 player.sendMessage(RedhookPlugin.getPrefix() + "§eUnbound redstone action from block.");
             } else {
                 event.setCancelled(true);
-                player.sendMessage(RedhookPlugin.getPrefix() + "§cThis block has a bound action. Sneak to remove and break.");
+                player.sendMessage(
+                        RedhookPlugin.getPrefix() + "§cThis block has a bound action. Sneak to remove and break.");
             }
         }
     }
@@ -63,7 +64,7 @@ public class DebugBlockBreakListener implements Listener {
 
     private void debug(Block block, Player player) {
         ArrayList<RedstoneActionInstance> instances = RedstoneLinkManager.getActionInstances(block);
-        if(instances == null || instances.isEmpty()){
+        if (instances == null || instances.isEmpty()) {
             player.sendMessage(RedhookPlugin.getPrefix() + "§cNo actions bound to this block");
             return;
         }
@@ -71,21 +72,22 @@ public class DebugBlockBreakListener implements Listener {
         player.sendMessage(RedhookPlugin.getPrefix() + "§8===== §l§7" + block.getType().name() + " §r§8=====");
         player.sendMessage(RedhookPlugin.getPrefix() + "Total Actions: §7" + instances.size());
 
-        for(RedstoneActionInstance instance : instances){
+        for (RedstoneActionInstance instance : instances) {
             String colorCode = StateColor.valueOf(instance.getTriggerCondition().name()).getColorCode();
-            
+
             Map<String, Object> actionData = instance.getAction().serialize();
             actionData.remove("id");
-            actionData.remove("type"); 
+            actionData.remove("type");
             actionData.remove("label");
 
             player.sendMessage(RedhookPlugin.getPrefix());
-            player.sendMessage(RedhookPlugin.getPrefix() + "§6" + instance.getAction().getLabel() + " (" + instance.getAction().getId() + ")§8@" + colorCode + instance.getTriggerCondition().name());
+            player.sendMessage(RedhookPlugin.getPrefix() + "§6" + instance.getAction().getLabel() + " ("
+                    + instance.getAction().getId() + ")§8@" + colorCode + instance.getTriggerCondition().name());
 
             for (Map.Entry<String, Object> entry : actionData.entrySet()) {
                 String key = entry.getKey().substring(0, 1).toUpperCase() + entry.getKey().substring(1);
                 Object value = entry.getValue();
-                
+
                 if (value instanceof Iterable<?> || value instanceof Object[]) {
                     player.sendMessage(RedhookPlugin.getPrefix() + key + ":");
                     if (value instanceof Iterable<?>) {

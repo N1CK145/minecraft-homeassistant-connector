@@ -17,10 +17,10 @@ import io.github.n1ck145.redhook.utils.ItemBuilder;
 
 public abstract class AbstractRedstoneAction implements RedstoneAction {
     private final Material icon;
-    
-    @ActionField(hidden = true)
+
+    @ActionField(hidden = true, required = true)
     private final String id;
-    
+
     @ActionField(label = "Label", description = "The label of the action", icon = Material.NAME_TAG, required = true)
     private final String label;
 
@@ -28,9 +28,15 @@ public abstract class AbstractRedstoneAction implements RedstoneAction {
     private final List<String> description;
 
     protected AbstractRedstoneAction(String id, String label, List<String> description, Material icon) {
+        // Check if the class has the required annotation
+        if (!getClass().isAnnotationPresent(ActionTypeRepresentation.class)) {
+            throw new IllegalStateException(
+                    "Class " + getClass().getName() + " must be annotated with @ActionTypeRepresentation");
+        }
+
         this.id = id;
         this.label = label;
-        this.description = description != null ? description : List.of();
+        this.description = description;
         this.icon = icon;
     }
 
@@ -52,28 +58,29 @@ public abstract class AbstractRedstoneAction implements RedstoneAction {
     @Override
     public ItemStack getIcon() {
         return new ItemBuilder(icon)
-            .name(ColorMapper.map(label))
-            .lore(description.stream().map(ColorMapper::map).toList())
-            .build();
+                .name(ColorMapper.map(label))
+                .lore(description.stream().map(ColorMapper::map).toList())
+                .build();
     }
 
     @Override
-    public Map<String, ActionConfigurationItem> getConfigurationItems() {
-        Map<String, ActionConfigurationItem> items = new HashMap<>();
-        
-        for (Field field : getClass().getDeclaredFields()) {
-            ActionField annotation = field.getAnnotation(ActionField.class);
-            if (annotation != null) {
-                field.setAccessible(true);
-                items.put(field.getName(), new ActionConfigurationItem(
-                    annotation.icon(),
-                    annotation.label(),
-                    annotation.description(),
-                    field.getType()
-                ));
+    public Map<ActionConfigurationItem, Field> getConfigurationItems() {
+        Map<ActionConfigurationItem, Field> items = new HashMap<>();
+
+        Class<?> currentClass = getClass();
+        while (currentClass != null && AbstractRedstoneAction.class.isAssignableFrom(currentClass)) {
+            for (Field field : currentClass.getDeclaredFields()) {
+                ActionField annotation = field.getAnnotation(ActionField.class);
+                if (annotation != null) {
+                    field.setAccessible(true);
+                    items.put(new ActionConfigurationItem(
+                            annotation,
+                            field.getType()), field);
+                }
             }
+            currentClass = currentClass.getSuperclass();
         }
-        
+
         return items;
     }
 
@@ -82,7 +89,7 @@ public abstract class AbstractRedstoneAction implements RedstoneAction {
         Map<String, Object> map = new HashMap<>();
 
         map.put("type", ActionRegistry.getTypeName(this));
-        
+
         // Add annotated fields
         for (Field field : getClass().getDeclaredFields()) {
             ActionField annotation = field.getAnnotation(ActionField.class);
@@ -95,46 +102,56 @@ public abstract class AbstractRedstoneAction implements RedstoneAction {
                 }
             }
         }
-        
+
         return map;
     }
 
     public static <T extends AbstractRedstoneAction> T deserialize(Map<?, ?> configurationMap, Class<T> actionClass) {
         try {
             String id = (String) configurationMap.get("id");
-            String label = ColorMapper.map((String) configurationMap.get("label"));
-            List<String> description;
 
-            if(configurationMap.get("description") instanceof List<?> list) {
+            String label = ColorMapper.map((String) configurationMap.get("label"));
+
+            List<String> description = null;
+
+            if (configurationMap.get("description") instanceof List<?> list) {
                 description = list.stream().map(Object::toString).map(ColorMapper::map).toList();
-            } else if(configurationMap.get("description") instanceof String string) {
+            } else if (configurationMap.get("description") instanceof String string) {
                 description = List.of(ColorMapper.map(string));
-            } else {
-                description = List.of();
+            }
+
+            if (label != null && label.isEmpty()) {
+                Bukkit.getLogger().info("Label is empty, setting to null");
+                label = null;
+            }
+            if (description != null && description.isEmpty()) {
+                Bukkit.getLogger().info("Description is empty, setting to null");
+                description = null;
             }
 
             // Create instance of actionClass
-            T instance = actionClass.getDeclaredConstructor(String.class, String.class, List.class).newInstance(id, label, description);
-            
+            T instance = actionClass.getDeclaredConstructor(String.class, String.class, List.class).newInstance(id,
+                    label, description);
+
             // Set any additional fields from the configuration map
             for (Field field : actionClass.getDeclaredFields()) {
                 ActionField annotation = field.getAnnotation(ActionField.class);
                 if (annotation != null) {
                     field.setAccessible(true);
                     Object value = configurationMap.get(field.getName());
-                    
+
                     // Apply color mapping for String fields
                     if (field.getType() == String.class && value instanceof String) {
-                        value = ColorMapper.map((String)value);
+                        value = ColorMapper.map((String) value);
                     }
                     // Apply color mapping for List<String> fields
                     else if (value instanceof List<?> list && field.getType() == List.class) {
                         value = list.stream()
-                            .map(Object::toString)
-                            .map(ColorMapper::map)
-                            .toList();
+                                .map(Object::toString)
+                                .map(ColorMapper::map)
+                                .toList();
                     }
-                    
+
                     field.set(instance, value);
                 }
             }
@@ -147,25 +164,41 @@ public abstract class AbstractRedstoneAction implements RedstoneAction {
 
     @Override
     /**
-     * Checks if all required fields are set and if the action is not already registered.
+     * Checks if all required fields are set and if the action is not already
+     * registered.
      * 
-     * @return ValidationResult containing the validation status and any error message
+     * @return ValidationResult containing the validation status and any error
+     *         message
      */
     public ValidationResult validate() {
-        for (Field field : getClass().getDeclaredFields()) {
-            ActionField annotation = field.getAnnotation(ActionField.class);
-            if (annotation != null && annotation.required()) {
+
+        Bukkit.getLogger().info("Starting validation of action " + id);
+        for (var keyValue : getConfigurationItems().entrySet()) {
+            ActionConfigurationItem configItem = keyValue.getKey();
+            Field field = keyValue.getValue();
+
+            Bukkit.getLogger().info("Validating field: " + field.getName() + ", required: " + configItem.isRequired());
+
+            if (configItem.isRequired()) {
                 field.setAccessible(true);
                 try {
                     Object value = field.get(this);
                     if (value == null) {
+                        Bukkit.getLogger().warning("Validation failed - missing required field: " + field.getName());
                         return ValidationResult.error("Action is missing required field: " + field.getName());
                     }
+                    Bukkit.getLogger()
+                            .info("Field " + field.getName() + " validated successfully with value: '" + value + "'");
                 } catch (IllegalAccessException e) {
+                    Bukkit.getLogger().severe(
+                            "Validation failed - could not access field " + field.getName() + ": " + e.getMessage());
                     return ValidationResult.error("Failed to access field " + field.getName() + ": " + e.getMessage());
                 }
+            } else {
+                Bukkit.getLogger().info("Skipping validation of optional field: " + field.getName());
             }
         }
+        Bukkit.getLogger().info("All required fields validated successfully for action " + id);
 
         if (ActionRegistry.get(id) != null) {
             return ValidationResult.error("Action " + id + " is already registered");

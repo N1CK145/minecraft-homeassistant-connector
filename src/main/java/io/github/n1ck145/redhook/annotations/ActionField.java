@@ -10,6 +10,7 @@ import org.bukkit.Material;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.LOCAL_VARIABLE})
 public @interface ActionField {
+    Object description = null;
     String label() default "";
     String description() default "";
     String defaultValue() default "";
