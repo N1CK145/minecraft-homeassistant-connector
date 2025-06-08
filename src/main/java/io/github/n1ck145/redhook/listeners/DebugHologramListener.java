@@ -1,11 +1,12 @@
 package io.github.n1ck145.redhook.listeners;
 
 import io.github.n1ck145.redhook.RedhookPlugin;
-import io.github.n1ck145.redhook.actions.lib.RedstoneActionInstance;
-import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
-import io.github.n1ck145.redhook.utils.HologramManager;
-import io.github.n1ck145.redhook.utils.StateColor;
-import io.github.n1ck145.redhook.utils.ItemUtils;
+import io.github.n1ck145.redhook.constants.TriggerCondition;
+import io.github.n1ck145.redhook.manager.action.RedstoneLinkManager;
+import io.github.n1ck145.redhook.manager.hologram.HologramManager;
+import io.github.n1ck145.redhook.model.action.RedstoneActionInstance;
+import io.github.n1ck145.redhook.util.ItemUtils;
+
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -57,7 +58,7 @@ public class DebugHologramListener implements Listener {
 
 							for (RedstoneActionInstance instance : instances) {
 								String stateColor =
-										StateColor.valueOf(instance.getTriggerCondition().name()).getColorCode();
+										TriggerCondition.valueOf(instance.getTriggerCondition().name()).getColorCode();
 
 								hologramText.append("§f").append(instance.getAction().getLabel()).append("§8@")
 										.append(stateColor).append(instance.getTriggerCondition().name()).append("\n");

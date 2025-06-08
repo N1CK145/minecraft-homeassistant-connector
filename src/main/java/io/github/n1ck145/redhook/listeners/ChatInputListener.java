@@ -1,8 +1,9 @@
 package io.github.n1ck145.redhook.listeners;
 
 import io.github.n1ck145.redhook.RedhookPlugin;
-import io.github.n1ck145.redhook.inventories.CreateActionMenu;
-import io.github.n1ck145.redhook.manager.MenuManager;
+import io.github.n1ck145.redhook.implementation.menu.CreateActionMenu;
+import io.github.n1ck145.redhook.manager.menu.MenuManager;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

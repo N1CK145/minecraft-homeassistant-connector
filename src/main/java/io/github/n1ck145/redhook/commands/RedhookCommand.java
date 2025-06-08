@@ -7,15 +7,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.n1ck145.redhook.RedhookPlugin;
-import io.github.n1ck145.redhook.lib.StaticItems;
+import io.github.n1ck145.redhook.constants.RedhookItems;
 
 public class RedhookCommand implements CommandExecutor {
 	private final ItemStack wand;
 	private final ItemStack debug;
 
 	public RedhookCommand() {
-		this.wand = StaticItems.WAND.clone();
-		this.debug = StaticItems.DEBUG.clone();
+		this.wand = RedhookItems.WAND.clone();
+		this.debug = RedhookItems.DEBUG.clone();
 	}
 
 	@Override

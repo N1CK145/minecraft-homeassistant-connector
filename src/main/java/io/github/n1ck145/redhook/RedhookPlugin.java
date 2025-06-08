@@ -1,22 +1,22 @@
 package io.github.n1ck145.redhook;
 
-import io.github.n1ck145.redhook.actions.CommandAction;
-import io.github.n1ck145.redhook.actions.HttpAction;
-import io.github.n1ck145.redhook.actions.PlayerMessageAction;
-import io.github.n1ck145.redhook.actions.lib.RedstoneAction;
-import io.github.n1ck145.redhook.actions.lib.RedstoneActionType;
+import io.github.n1ck145.redhook.api.action.RedstoneAction;
 import io.github.n1ck145.redhook.commands.RedhookCommand;
 import io.github.n1ck145.redhook.config.ConfigManager;
+import io.github.n1ck145.redhook.implementation.action.CommandAction;
+import io.github.n1ck145.redhook.implementation.action.HttpAction;
+import io.github.n1ck145.redhook.implementation.action.PlayerMessageAction;
 import io.github.n1ck145.redhook.listeners.ChatInputListener;
 import io.github.n1ck145.redhook.listeners.DebugBlockBreakListener;
 import io.github.n1ck145.redhook.listeners.InventoryClickListener;
 import io.github.n1ck145.redhook.listeners.RedhookToolsInteractionListener;
 import io.github.n1ck145.redhook.listeners.RedstonePowerChangeListener;
 import io.github.n1ck145.redhook.listeners.DebugHologramListener;
-import io.github.n1ck145.redhook.manager.ActionFactory;
-import io.github.n1ck145.redhook.manager.ActionRegistry;
-import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
-import io.github.n1ck145.redhook.utils.ResponseMessage;
+import io.github.n1ck145.redhook.manager.action.ActionFactory;
+import io.github.n1ck145.redhook.manager.action.ActionRegistry;
+import io.github.n1ck145.redhook.manager.action.RedstoneLinkManager;
+import io.github.n1ck145.redhook.model.action.RedstoneActionType;
+import io.github.n1ck145.redhook.util.ResponseMessage;
 
 import java.util.List;
 
