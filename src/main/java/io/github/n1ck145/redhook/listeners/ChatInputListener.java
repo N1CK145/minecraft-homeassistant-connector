@@ -10,18 +10,17 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class ChatInputListener implements Listener {
 
-  @EventHandler
-  public void onPlayerChat(AsyncPlayerChatEvent event) {
-    if (MenuManager.getCurrentMenu(event.getPlayer()) instanceof CreateActionMenu) {
-      event.setCancelled(true);
-      CreateActionMenu menu = (CreateActionMenu) MenuManager.getCurrentMenu(
-          event.getPlayer());
-      String message = event.getMessage();
+	@EventHandler
+	public void onPlayerChat(AsyncPlayerChatEvent event) {
+		if (MenuManager.getCurrentMenu(event.getPlayer()) instanceof CreateActionMenu) {
+			event.setCancelled(true);
+			CreateActionMenu menu = (CreateActionMenu) MenuManager.getCurrentMenu(event.getPlayer());
+			String message = event.getMessage();
 
-      // Schedule the inventory opening on the main thread
-      Bukkit.getScheduler().runTask(RedhookPlugin.getInstance(), () -> {
-        menu.handleChatInput(message);
-      });
-    }
-  }
+			// Schedule the inventory opening on the main thread
+			Bukkit.getScheduler().runTask(RedhookPlugin.getInstance(), () -> {
+				menu.handleChatInput(message);
+			});
+		}
+	}
 }

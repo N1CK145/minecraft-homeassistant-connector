@@ -10,13 +10,13 @@ import org.bukkit.Material;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ActionTypeRepresentation {
-    /**
-     * The material to use as the icon for this action type
-     */
-    Material icon() default Material.BARRIER;
+	/**
+	 * The material to use as the icon for this action type
+	 */
+	Material icon() default Material.BARRIER;
 
-    /**
-     * The description of the action type
-     */
-    String description() default "";
+	/**
+	 * The description of the action type
+	 */
+	String description() default "";
 }

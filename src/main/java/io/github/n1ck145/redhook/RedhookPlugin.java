@@ -23,88 +23,88 @@ import java.util.List;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class RedhookPlugin extends JavaPlugin {
-    private static RedhookPlugin instance;
+	private static RedhookPlugin instance;
 
-    public RedhookPlugin() {
-        instance = this;
-    }
+	public RedhookPlugin() {
+		instance = this;
+	}
 
-    @Override
-    public void onEnable() {
-        registerEvents();
-        registerActionTypes();
-        loadConfigs();
+	@Override
+	public void onEnable() {
+		registerEvents();
+		registerActionTypes();
+		loadConfigs();
 
-        RedstoneLinkManager.initialize(this);
+		RedstoneLinkManager.initialize(this);
 
-        this.getCommand("redhook").setExecutor(new RedhookCommand());
+		this.getCommand("redhook").setExecutor(new RedhookCommand());
 
-        printRegisterStatus();
-    }
+		printRegisterStatus();
+	}
 
-    @Override
-    public void onDisable() {
-        this.getLogger().info("Disabled!");
-    }
+	@Override
+	public void onDisable() {
+		this.getLogger().info("Disabled!");
+	}
 
-    private void printRegisterStatus() {
-        List<RedstoneActionType> actionTypes = ActionFactory.getRegisteredActionTypes();
-        this.getLogger().info("Registered " + actionTypes.size() + " action type(s):");
-        for (RedstoneActionType type : actionTypes) {
-            this.getLogger().info("- " + type.getName());
-        }
+	private void printRegisterStatus() {
+		List<RedstoneActionType> actionTypes = ActionFactory.getRegisteredActionTypes();
+		this.getLogger().info("Registered " + actionTypes.size() + " action type(s):");
+		for (RedstoneActionType type : actionTypes) {
+			this.getLogger().info("- " + type.getName());
+		}
 
-        List<RedstoneAction> actions = ActionRegistry.getAll();
-        this.getLogger().info("Registered " + actions.size() + " action(s)");
-    }
+		List<RedstoneAction> actions = ActionRegistry.getAll();
+		this.getLogger().info("Registered " + actions.size() + " action(s)");
+	}
 
-    public static String getPrefix() {
-        return "§8[§4Red§cHook§8] §r";
-    }
+	public static String getPrefix() {
+		return "§8[§4Red§cHook§8] §r";
+	}
 
-    public static RedhookPlugin getInstance() {
-        return instance;
-    }
+	public static RedhookPlugin getInstance() {
+		return instance;
+	}
 
-    private void registerEvents() {
-        getServer().getPluginManager().registerEvents(new RedstonePowerChangeListener(), this);
-        getServer().getPluginManager().registerEvents(new InventoryClickListener(), this);
-        getServer().getPluginManager().registerEvents(new RedhookToolInteractionListener(), this);
-        getServer().getPluginManager().registerEvents(new DebugBlockBreakListener(), this);
-        getServer().getPluginManager().registerEvents(new DebugHologramListener(), this);
-        getServer().getPluginManager().registerEvents(new ChatInputListener(), this);
-    }
+	private void registerEvents() {
+		getServer().getPluginManager().registerEvents(new RedstonePowerChangeListener(), this);
+		getServer().getPluginManager().registerEvents(new InventoryClickListener(), this);
+		getServer().getPluginManager().registerEvents(new RedhookToolInteractionListener(), this);
+		getServer().getPluginManager().registerEvents(new DebugBlockBreakListener(), this);
+		getServer().getPluginManager().registerEvents(new DebugHologramListener(), this);
+		getServer().getPluginManager().registerEvents(new ChatInputListener(), this);
+	}
 
-    private void registerActionTypes() {
-        ActionFactory.register(PlayerMessageAction.class);
-        ActionFactory.register(HttpAction.class);
-        ActionFactory.register(CommandAction.class);
-    }
+	private void registerActionTypes() {
+		ActionFactory.register(PlayerMessageAction.class);
+		ActionFactory.register(HttpAction.class);
+		ActionFactory.register(CommandAction.class);
+	}
 
-    private void loadConfigs() {
-        ConfigManager configManager = new ConfigManager(this);
+	private void loadConfigs() {
+		ConfigManager configManager = new ConfigManager(this);
 
-        configManager.getActionsConfig().loadActions();
-    }
+		configManager.getActionsConfig().loadActions();
+	}
 
-    public boolean reloadConfigs() {
-        boolean success = true;
+	public boolean reloadConfigs() {
+		boolean success = true;
 
-        ActionRegistry.clear();
-        RedstoneLinkManager.clear();
+		ActionRegistry.clear();
+		RedstoneLinkManager.clear();
 
-        ConfigManager configManager = new ConfigManager(this);
-        ResponseMessage actionMessage = configManager.getActionsConfig().loadActions();
+		ConfigManager configManager = new ConfigManager(this);
+		ResponseMessage actionMessage = configManager.getActionsConfig().loadActions();
 
-        if (!actionMessage.isSuccess()) {
-            this.getLogger().severe(actionMessage.getMessage());
-            success = false;
-        }
+		if (!actionMessage.isSuccess()) {
+			this.getLogger().severe(actionMessage.getMessage());
+			success = false;
+		}
 
-        configManager.getBindingsConfig().loadBindings();
+		configManager.getBindingsConfig().loadBindings();
 
-        RedstoneLinkManager.initialize(this);
+		RedstoneLinkManager.initialize(this);
 
-        return success;
-    }
+		return success;
+	}
 }

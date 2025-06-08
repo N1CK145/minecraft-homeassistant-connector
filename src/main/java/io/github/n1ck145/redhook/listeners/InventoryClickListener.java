@@ -10,16 +10,16 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 
 public class InventoryClickListener implements Listener {
 
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        MenuManager.handleClick(event);
-    }
+	@EventHandler
+	public void onInventoryClick(InventoryClickEvent event) {
+		MenuManager.handleClick(event);
+	}
 
-    @EventHandler
-    public void onInventoryClose(InventoryCloseEvent event) {
-        if (!(event.getPlayer() instanceof Player))
-            return;
+	@EventHandler
+	public void onInventoryClose(InventoryCloseEvent event) {
+		if (!(event.getPlayer() instanceof Player))
+			return;
 
-        MenuManager.handleClose(event);
-    }
+		MenuManager.handleClose(event);
+	}
 }

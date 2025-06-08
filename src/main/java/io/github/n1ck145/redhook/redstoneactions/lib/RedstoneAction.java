@@ -9,19 +9,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public interface RedstoneAction {
-  String getId();
+	String getId();
 
-  String getLabel();
+	String getLabel();
 
-  List<String> getDescription();
+	List<String> getDescription();
 
-  ItemStack getIcon();
+	ItemStack getIcon();
 
-  Map<ActionConfigurationItem, Field> getConfigurationItems();
+	Map<ActionConfigurationItem, Field> getConfigurationItems();
 
-  void execute(Player trigger);
+	void execute(Player trigger);
 
-  Map<String, Object> serialize();
+	Map<String, Object> serialize();
 
-  ValidationResult validate();
+	ValidationResult validate();
 }
