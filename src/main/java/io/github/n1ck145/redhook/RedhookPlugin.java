@@ -2,15 +2,20 @@ package io.github.n1ck145.redhook;
 
 import io.github.n1ck145.redhook.commands.RedhookCommand;
 import io.github.n1ck145.redhook.config.ConfigManager;
-import io.github.n1ck145.redhook.listeners.BlockBreakListener;
+import io.github.n1ck145.redhook.listeners.ChatInputListener;
+import io.github.n1ck145.redhook.listeners.DebugBlockBreakListener;
 import io.github.n1ck145.redhook.listeners.InventoryClickListener;
-import io.github.n1ck145.redhook.listeners.RedstoneBindListener;
+import io.github.n1ck145.redhook.listeners.RedhookToolInteractionListener;
 import io.github.n1ck145.redhook.listeners.RedstonePowerChangeListener;
+import io.github.n1ck145.redhook.listeners.DebugHologramListener;
 import io.github.n1ck145.redhook.manager.ActionFactory;
 import io.github.n1ck145.redhook.manager.ActionRegistry;
 import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
+import io.github.n1ck145.redhook.redstoneactions.CommandAction;
 import io.github.n1ck145.redhook.redstoneactions.PlayerMessageAction;
-import io.github.n1ck145.redhook.redstoneactions.RedstoneAction;
+import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneAction;
+import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneActionType;
+import io.github.n1ck145.redhook.utils.ResponseMessage;
 import io.github.n1ck145.redhook.redstoneactions.HttpAction;
 
 import java.util.List;
@@ -18,77 +23,88 @@ import java.util.List;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class RedhookPlugin extends JavaPlugin {
-    private static RedhookPlugin instance;
+	private static RedhookPlugin instance;
 
-    public RedhookPlugin(){
-        instance = this;
-    }
+	public RedhookPlugin() {
+		instance = this;
+	}
 
-    @Override
-    public void onEnable() {
-        // Plugin startup logic
-        registerEvents();
-        registerActionTypes();
-        loadConfigs();
-        
-        RedstoneLinkManager.initialize(this);
+	@Override
+	public void onEnable() {
+		registerActionTypes();
+		registerEvents();
+		loadConfigs();
 
-        this.getCommand("redhook").setExecutor(new RedhookCommand());
-        
-        printRegisterStatus();
-    }
+		RedstoneLinkManager.initialize(this);
 
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
-        this.getLogger().info("Disabled!");
-    }
+		this.getCommand("redhook").setExecutor(new RedhookCommand());
 
-    private void printRegisterStatus(){
-        String[] actionTypes = ActionFactory.getRegisteredActions();
-        this.getLogger().info("Registered " + actionTypes.length + " action type(s):");
-        for (String type : actionTypes) {
-            this.getLogger().info("- " + type);
-        }
-        
-        List<RedstoneAction> actions = ActionRegistry.getAll();
-        this.getLogger().info("Registered " + actions.size() + " action(s)");
-    }
+		printRegisterStatus();
+	}
 
-    public static String getPrefix(){
-        return "§8[§4Red§cHook§8] §r";
-    }
+	@Override
+	public void onDisable() {
+		this.getLogger().info("Disabled!");
+	}
 
-    public static RedhookPlugin getInstance(){
-        return instance;
-    }
+	private void printRegisterStatus() {
+		List<RedstoneActionType> actionTypes = ActionFactory.getRegisteredActionTypes();
+		this.getLogger().info("Registered " + actionTypes.size() + " action type(s):");
+		for (RedstoneActionType type : actionTypes) {
+			this.getLogger().info("- " + type.getName());
+		}
 
-    private void registerEvents() {
-        getServer().getPluginManager().registerEvents(new RedstonePowerChangeListener(), this);
-        getServer().getPluginManager().registerEvents(new InventoryClickListener(), this);
-        getServer().getPluginManager().registerEvents(new RedstoneBindListener(), this);
-        getServer().getPluginManager().registerEvents(new BlockBreakListener(), this);
-    }
+		List<RedstoneAction> actions = ActionRegistry.getAll();
+		this.getLogger().info("Registered " + actions.size() + " action(s)");
+	}
 
-    private void registerActionTypes() {
-        ActionFactory.register(PlayerMessageAction.class, PlayerMessageAction::deserialize);
-        ActionFactory.register(HttpAction.class, HttpAction::deserialize);
-    }
+	public static String getPrefix() {
+		return "§8[§4Red§cHook§8] §r";
+	}
 
-    private void loadConfigs(){
-        ConfigManager configManager = new ConfigManager(this);
+	public static RedhookPlugin getInstance() {
+		return instance;
+	}
 
-        configManager.getActionsConfig().loadActions();
-    }
+	private void registerEvents() {
+		getServer().getPluginManager().registerEvents(new RedstonePowerChangeListener(), this);
+		getServer().getPluginManager().registerEvents(new InventoryClickListener(), this);
+		getServer().getPluginManager().registerEvents(new RedhookToolInteractionListener(), this);
+		getServer().getPluginManager().registerEvents(new DebugBlockBreakListener(), this);
+		getServer().getPluginManager().registerEvents(new DebugHologramListener(), this);
+		getServer().getPluginManager().registerEvents(new ChatInputListener(), this);
+	}
 
-    public void reloadConfigs(){
-        ActionRegistry.clear();
-        RedstoneLinkManager.clear();
+	private void registerActionTypes() {
+		ActionFactory.register(PlayerMessageAction.class);
+		ActionFactory.register(HttpAction.class);
+		ActionFactory.register(CommandAction.class);
+	}
 
-        ConfigManager configManager = new ConfigManager(this);
-        configManager.getActionsConfig().loadActions();
-        configManager.getBindingsConfig().loadBindings();
+	private void loadConfigs() {
+		ConfigManager configManager = ConfigManager.getInstance();
 
-        RedstoneLinkManager.initialize(this);
-    }
+		configManager.getActionsConfig().loadActions();
+	}
+
+	public boolean reloadConfigs() {
+		boolean success = true;
+
+		ActionRegistry.clear();
+		RedstoneLinkManager.clear();
+
+		ConfigManager configManager = ConfigManager.getInstance();
+		ResponseMessage actionMessage = configManager.getActionsConfig().loadActions();
+
+		if (!actionMessage.isSuccess()) {
+			this.getLogger().severe(actionMessage.getMessage());
+			success = false;
+		}
+
+		configManager.getBindingsConfig().loadBindings();
+
+		RedstoneLinkManager.initialize(this);
+
+		return success;
+	}
 }
