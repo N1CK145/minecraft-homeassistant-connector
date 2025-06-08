@@ -2,11 +2,11 @@ package io.github.n1ck145.redhook.utils;
 
 import org.bukkit.Location;
 
-public class BoundRedstoneBlock {
+public class LinkedRedstoneBlock {
 	private final Location location;
 	private final String actionId;
 
-	public BoundRedstoneBlock(Location location, String actionId) {
+	public LinkedRedstoneBlock(Location location, String actionId) {
 		this.location = location;
 		this.actionId = actionId;
 	}

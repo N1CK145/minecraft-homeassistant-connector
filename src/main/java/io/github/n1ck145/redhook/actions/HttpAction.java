@@ -1,4 +1,4 @@
-package io.github.n1ck145.redhook.redstoneactions;
+package io.github.n1ck145.redhook.actions;
 
 import java.util.List;
 import java.util.Map;
@@ -8,24 +8,24 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import io.github.n1ck145.redhook.RedhookPlugin;
-import io.github.n1ck145.redhook.annotations.ActionField;
-import io.github.n1ck145.redhook.redstoneactions.lib.AbstractRedstoneAction;
-import io.github.n1ck145.redhook.redstoneactions.lib.ActionTypeRepresentation;
+import io.github.n1ck145.redhook.actions.lib.ActionTypeRepresentation;
+import io.github.n1ck145.redhook.actions.lib.RedstoneActionBase;
+import io.github.n1ck145.redhook.annotations.ActionFieldRepresentation;
 
 @ActionTypeRepresentation(icon = Material.NETHER_STAR, description = "Sends HTTP requests to specified URLs when triggered by redstone. Supports GET, POST, and other HTTP methods with custom headers and body content.")
-public class HttpAction extends AbstractRedstoneAction {
+public class HttpAction extends RedstoneActionBase {
 	private static final Material material = Material.NETHER_STAR;
 
-	@ActionField(label = "URL", description = "The URL to send the request to", icon = Material.OAK_SIGN, required = true)
+	@ActionFieldRepresentation(label = "URL", description = "The URL to send the request to", icon = Material.OAK_SIGN, required = true)
 	private String url;
 
-	@ActionField(label = "Headers", description = "The headers to send with the request", icon = Material.BUNDLE)
+	@ActionFieldRepresentation(label = "Headers", description = "The headers to send with the request", icon = Material.BUNDLE)
 	private Map<String, String> headers;
 
-	@ActionField(label = "Body", description = "The body to send with the request", icon = Material.WRITABLE_BOOK)
+	@ActionFieldRepresentation(label = "Body", description = "The body to send with the request", icon = Material.WRITABLE_BOOK)
 	private String body;
 
-	@ActionField(label = "Method", description = "The method to use for the request", icon = Material.COMMAND_BLOCK, defaultValue = "GET")
+	@ActionFieldRepresentation(label = "Method", description = "The method to use for the request", icon = Material.COMMAND_BLOCK, defaultValue = "GET")
 	private String method;
 
 	public HttpAction(String id, String label, List<String> description) {

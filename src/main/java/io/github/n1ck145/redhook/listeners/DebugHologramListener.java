@@ -1,11 +1,11 @@
 package io.github.n1ck145.redhook.listeners;
 
 import io.github.n1ck145.redhook.RedhookPlugin;
+import io.github.n1ck145.redhook.actions.lib.RedstoneActionInstance;
 import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
-import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneActionInstance;
 import io.github.n1ck145.redhook.utils.HologramManager;
 import io.github.n1ck145.redhook.utils.StateColor;
-import io.github.n1ck145.redhook.utils.ItemUtil;
+import io.github.n1ck145.redhook.utils.ItemUtils;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,11 +34,11 @@ public class DebugHologramListener implements Listener {
 		}
 
 		// If holding debug stick, start showing holograms
-		if (ItemUtil.isDebugItem(newItem)) {
+		if (ItemUtils.isDebugItem(newItem)) {
 			BukkitRunnable task = new BukkitRunnable() {
 				@Override
 				public void run() {
-					if (!player.isOnline() || !ItemUtil.isDebugItem(player.getInventory().getItemInMainHand())) {
+					if (!player.isOnline() || !ItemUtils.isDebugItem(player.getInventory().getItemInMainHand())) {
 						HologramManager.removeHologram(player);
 						cancel();
 						hologramTasks.remove(player);

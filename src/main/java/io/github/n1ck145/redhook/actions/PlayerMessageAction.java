@@ -1,8 +1,8 @@
-package io.github.n1ck145.redhook.redstoneactions;
+package io.github.n1ck145.redhook.actions;
 
-import io.github.n1ck145.redhook.annotations.ActionField;
-import io.github.n1ck145.redhook.redstoneactions.lib.AbstractRedstoneAction;
-import io.github.n1ck145.redhook.redstoneactions.lib.ActionTypeRepresentation;
+import io.github.n1ck145.redhook.actions.lib.ActionTypeRepresentation;
+import io.github.n1ck145.redhook.actions.lib.RedstoneActionBase;
+import io.github.n1ck145.redhook.annotations.ActionFieldRepresentation;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -11,13 +11,13 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 @ActionTypeRepresentation(icon = Material.PAPER, description = "Sends a message to a specific player or broadcasts it to all players when triggered by redstone")
-public class PlayerMessageAction extends AbstractRedstoneAction {
+public class PlayerMessageAction extends RedstoneActionBase {
 	private static final Material material = Material.PAPER;
 
-	@ActionField(label = "Message", description = "The message to send to the player", icon = Material.PAPER, required = true)
+	@ActionFieldRepresentation(label = "Message", description = "The message to send to the player", icon = Material.PAPER, required = true)
 	private String message;
 
-	@ActionField(label = "Target Player", description = "The player to send the message to", icon = Material.PAPER, required = false)
+	@ActionFieldRepresentation(label = "Target Player", description = "The player to send the message to", icon = Material.PAPER, required = false)
 	private String targetPlayerName;
 
 	public PlayerMessageAction(String id, String label, List<String> description) {

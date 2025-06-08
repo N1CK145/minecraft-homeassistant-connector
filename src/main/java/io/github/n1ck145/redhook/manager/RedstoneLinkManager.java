@@ -1,9 +1,9 @@
 package io.github.n1ck145.redhook.manager;
 
-import io.github.n1ck145.redhook.config.BindingsConfig;
-import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneAction;
-import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneActionInstance;
-import io.github.n1ck145.redhook.redstoneactions.lib.TriggerCondition;
+import io.github.n1ck145.redhook.actions.lib.RedstoneAction;
+import io.github.n1ck145.redhook.actions.lib.RedstoneActionInstance;
+import io.github.n1ck145.redhook.actions.lib.TriggerCondition;
+import io.github.n1ck145.redhook.config.LinkConfig;
 import io.github.n1ck145.redhook.utils.ResponseMessage;
 
 import org.bukkit.Location;
@@ -15,10 +15,10 @@ import java.util.*;
 
 public class RedstoneLinkManager {
 	private static final Map<Location, ArrayList<RedstoneActionInstance>> bindings = new HashMap<>();
-	private static BindingsConfig bindingsConfig;
+	private static LinkConfig bindingsConfig;
 
 	public static void initialize(Plugin plugin) {
-		bindingsConfig = new BindingsConfig(plugin, "bindings.yml");
+		bindingsConfig = new LinkConfig(plugin, "bindings.yml");
 		bindings.putAll(bindingsConfig.loadBindings());
 	}
 

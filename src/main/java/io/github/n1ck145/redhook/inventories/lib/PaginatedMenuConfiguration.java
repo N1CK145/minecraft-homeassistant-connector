@@ -2,7 +2,7 @@ package io.github.n1ck145.redhook.inventories.lib;
 
 import org.bukkit.Material;
 
-import io.github.n1ck145.redhook.redstoneactions.lib.ValidationResult;
+import io.github.n1ck145.redhook.actions.lib.ValidationResult;
 
 /**
  * Configuration class for paginated menu inventories in Minecraft. This class handles the layout

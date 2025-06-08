@@ -1,4 +1,4 @@
-package io.github.n1ck145.redhook.redstoneactions.lib;
+package io.github.n1ck145.redhook.actions.lib;
 
 public class RedstoneActionInstance {
 

@@ -1,16 +1,16 @@
 package io.github.n1ck145.redhook.inventories;
 
 import io.github.n1ck145.redhook.RedhookPlugin;
-import io.github.n1ck145.redhook.config.ActionsConfig;
+import io.github.n1ck145.redhook.actions.lib.RedstoneAction;
+import io.github.n1ck145.redhook.actions.lib.ValidationResult;
+import io.github.n1ck145.redhook.config.ActionConfig;
 import io.github.n1ck145.redhook.config.ConfigManager;
-import io.github.n1ck145.redhook.inventories.lib.AbstractPaginatedMenu;
-import io.github.n1ck145.redhook.lib.ActionConfigurationItem;
+import io.github.n1ck145.redhook.inventories.lib.PaginatedMenu;
+import io.github.n1ck145.redhook.lib.ActionFieldConfiguration;
 import io.github.n1ck145.redhook.manager.ActionFactory;
 import io.github.n1ck145.redhook.manager.ActionRegistry;
 import io.github.n1ck145.redhook.manager.MenuManager;
 import io.github.n1ck145.redhook.manager.PlayerStateManager;
-import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneAction;
-import io.github.n1ck145.redhook.redstoneactions.lib.ValidationResult;
 import io.github.n1ck145.redhook.utils.ItemBuilder;
 import io.github.n1ck145.redhook.utils.PlayerState;
 import it.unimi.dsi.fastutil.Arrays;
@@ -26,9 +26,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class CreateActionMenu extends AbstractPaginatedMenu<ActionConfigurationItem> {
+public class CreateActionMenu extends PaginatedMenu<ActionFieldConfiguration> {
 	private static final String TITLE = RedhookPlugin.getPrefix() + "Configure Action";
-	private ActionConfigurationItem currentEditingItem;
+	private ActionFieldConfiguration currentEditingItem;
 	private final RedstoneAction action;
 
 	public CreateActionMenu(Player player, RedstoneAction action) {
@@ -45,7 +45,7 @@ public class CreateActionMenu extends AbstractPaginatedMenu<ActionConfigurationI
 	}
 
 	@Override
-	protected ItemStack getItemRepresentation(ActionConfigurationItem item) {
+	protected ItemStack getItemRepresentation(ActionFieldConfiguration item) {
 		List<String> lore = new ArrayList<>();
 		lore.addAll(item.getDescription());
 		lore.add("");
@@ -71,7 +71,7 @@ public class CreateActionMenu extends AbstractPaginatedMenu<ActionConfigurationI
 	}
 
 	@Override
-	protected void onItemClick(ActionConfigurationItem item) {
+	protected void onItemClick(ActionFieldConfiguration item) {
 		player.sendMessage(RedhookPlugin.getPrefix() + "§8===== §6Chat input commands §8=====");
 		player.sendMessage(RedhookPlugin.getPrefix());
 		player.sendMessage(RedhookPlugin.getPrefix() + "§7:q §8- §rQuit edit dialog");
@@ -175,7 +175,7 @@ public class CreateActionMenu extends AbstractPaginatedMenu<ActionConfigurationI
 		}
 	}
 
-	private void updateFieldValue(ActionConfigurationItem configurationItem) {
+	private void updateFieldValue(ActionFieldConfiguration configurationItem) {
 		try {
 			Field field = action.getConfigurationItems().get(configurationItem);
 

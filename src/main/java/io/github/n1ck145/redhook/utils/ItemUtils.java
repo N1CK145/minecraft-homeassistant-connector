@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class ItemUtil {
+public class ItemUtils {
 	private static final NamespacedKey DEBUG_KEY = new NamespacedKey("redhook", "debug");
 	private static final NamespacedKey WAND_KEY = new NamespacedKey("redhook", "wand");
 

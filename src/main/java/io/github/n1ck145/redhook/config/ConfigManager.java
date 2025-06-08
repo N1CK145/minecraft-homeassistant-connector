@@ -5,21 +5,21 @@ import org.bukkit.plugin.Plugin;
 import io.github.n1ck145.redhook.RedhookPlugin;
 
 public class ConfigManager {
-	private final ActionsConfig actionsConfig;
-	private final BindingsConfig bindingsConfig;
+	private final ActionConfig actionsConfig;
+	private final LinkConfig bindingsConfig;
 
 	private static ConfigManager instance;
 
 	private ConfigManager(Plugin plugin) {
-		actionsConfig = new ActionsConfig(plugin, "actions.yml");
-		bindingsConfig = new BindingsConfig(plugin, "bindings.yml");
+		actionsConfig = new ActionConfig(plugin, "actions.yml");
+		bindingsConfig = new LinkConfig(plugin, "bindings.yml");
 	}
 
-	public ActionsConfig getActionsConfig() {
+	public ActionConfig getActionsConfig() {
 		return actionsConfig;
 	}
 
-	public BindingsConfig getBindingsConfig() {
+	public LinkConfig getBindingsConfig() {
 		return bindingsConfig;
 	}
 
@@ -29,5 +29,5 @@ public class ConfigManager {
 		}
 
 		return instance;
-	}	
+	}
 }

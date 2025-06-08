@@ -4,7 +4,7 @@ import io.github.n1ck145.redhook.inventories.ActionTypeMenu;
 import io.github.n1ck145.redhook.inventories.RedstoneActionMenu;
 import io.github.n1ck145.redhook.manager.ActionRegistry;
 import io.github.n1ck145.redhook.manager.MenuManager;
-import io.github.n1ck145.redhook.utils.ItemUtil;
+import io.github.n1ck145.redhook.utils.ItemUtils;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -13,19 +13,19 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class RedhookToolInteractionListener implements Listener {
+public class RedhookToolsInteractionListener implements Listener {
 
 	@EventHandler
 	public void onToolInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		ItemStack tool = player.getInventory().getItemInMainHand();
 
-		if (!ItemUtil.isWandItem(tool) && !ItemUtil.isDebugItem(tool))
+		if (!ItemUtils.isWandItem(tool) && !ItemUtils.isDebugItem(tool))
 			return;
 
 		event.setCancelled(true);
 
-		if (ItemUtil.isWandItem(tool))
+		if (ItemUtils.isWandItem(tool))
 			handleWandItemInteraction(event);
 
 		// TODO: Refactor debug block break listener to use this
