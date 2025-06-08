@@ -1,4 +1,4 @@
-package io.github.n1ck145.redhook.redstoneactions.lib;
+package io.github.n1ck145.redhook.actions.lib;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -9,25 +9,25 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import io.github.n1ck145.redhook.annotations.ActionField;
-import io.github.n1ck145.redhook.lib.ActionConfigurationItem;
+import io.github.n1ck145.redhook.annotations.ActionFieldRepresentation;
+import io.github.n1ck145.redhook.lib.ActionFieldConfiguration;
 import io.github.n1ck145.redhook.manager.ActionRegistry;
 import io.github.n1ck145.redhook.utils.ColorMapper;
 import io.github.n1ck145.redhook.utils.ItemBuilder;
 
-public abstract class AbstractRedstoneAction implements RedstoneAction {
+public abstract class RedstoneActionBase implements RedstoneAction {
 	private final Material icon;
 
-	@ActionField(hidden = true, required = true)
+	@ActionFieldRepresentation(hidden = true, required = true)
 	private final String id;
 
-	@ActionField(label = "Label", description = "The label of the action", icon = Material.NAME_TAG, required = true)
+	@ActionFieldRepresentation(label = "Label", description = "The label of the action", icon = Material.NAME_TAG, required = true)
 	private final String label;
 
-	@ActionField(label = "Description", description = "The description of the action", icon = Material.PAPER, required = true)
+	@ActionFieldRepresentation(label = "Description", description = "The description of the action", icon = Material.PAPER, required = true)
 	private final List<String> description;
 
-	protected AbstractRedstoneAction(String id, String label, List<String> description, Material icon) {
+	protected RedstoneActionBase(String id, String label, List<String> description, Material icon) {
 		// Check if the class has the required annotation
 		if (!getClass().isAnnotationPresent(ActionTypeRepresentation.class)) {
 			throw new IllegalStateException(
@@ -62,16 +62,16 @@ public abstract class AbstractRedstoneAction implements RedstoneAction {
 	}
 
 	@Override
-	public Map<ActionConfigurationItem, Field> getConfigurationItems() {
-		Map<ActionConfigurationItem, Field> items = new HashMap<>();
+	public Map<ActionFieldConfiguration, Field> getConfigurationItems() {
+		Map<ActionFieldConfiguration, Field> items = new HashMap<>();
 
 		Class<?> currentClass = getClass();
-		while (currentClass != null && AbstractRedstoneAction.class.isAssignableFrom(currentClass)) {
+		while (currentClass != null && RedstoneActionBase.class.isAssignableFrom(currentClass)) {
 			for (Field field : currentClass.getDeclaredFields()) {
-				ActionField annotation = field.getAnnotation(ActionField.class);
+				ActionFieldRepresentation annotation = field.getAnnotation(ActionFieldRepresentation.class);
 				if (annotation != null) {
 					field.setAccessible(true);
-					items.put(new ActionConfigurationItem(annotation, field.getType()), field);
+					items.put(new ActionFieldConfiguration(annotation, field.getType()), field);
 				}
 			}
 			currentClass = currentClass.getSuperclass();
@@ -88,7 +88,7 @@ public abstract class AbstractRedstoneAction implements RedstoneAction {
 
 		// Add annotated fields
 		for (Field field : getClass().getDeclaredFields()) {
-			ActionField annotation = field.getAnnotation(ActionField.class);
+			ActionFieldRepresentation annotation = field.getAnnotation(ActionFieldRepresentation.class);
 			if (annotation != null) {
 				field.setAccessible(true);
 				try {
@@ -103,7 +103,7 @@ public abstract class AbstractRedstoneAction implements RedstoneAction {
 		return map;
 	}
 
-	public static <T extends AbstractRedstoneAction> T deserialize(Map<?, ?> configurationMap, Class<T> actionClass) {
+	public static <T extends RedstoneActionBase> T deserialize(Map<?, ?> configurationMap, Class<T> actionClass) {
 		try {
 			String id = (String) configurationMap.get("id");
 
@@ -133,7 +133,7 @@ public abstract class AbstractRedstoneAction implements RedstoneAction {
 
 			// Set any additional fields from the configuration map
 			for (Field field : actionClass.getDeclaredFields()) {
-				ActionField annotation = field.getAnnotation(ActionField.class);
+				ActionFieldRepresentation annotation = field.getAnnotation(ActionFieldRepresentation.class);
 				if (annotation != null) {
 					field.setAccessible(true);
 					Object value = configurationMap.get(field.getName());
@@ -168,7 +168,7 @@ public abstract class AbstractRedstoneAction implements RedstoneAction {
 
 		Bukkit.getLogger().info("Starting validation of action " + id);
 		for (var keyValue : getConfigurationItems().entrySet()) {
-			ActionConfigurationItem configItem = keyValue.getKey();
+			ActionFieldConfiguration configItem = keyValue.getKey();
 			Field field = keyValue.getValue();
 
 			Bukkit.getLogger().info("Validating field: " + field.getName() + ", required: " + configItem.isRequired());

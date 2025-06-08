@@ -3,8 +3,8 @@ package io.github.n1ck145.redhook.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StringUtil {
-    public static  List<String> splitLongString(String str, int lineLength) {
+public class StringUtils {
+	public static List<String> splitLongString(String str, int lineLength) {
 		List<String> lines = new ArrayList<>();
 		int lastBreak = 0;
 		int lastSpace = 0;

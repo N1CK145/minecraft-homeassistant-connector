@@ -1,6 +1,6 @@
 package io.github.n1ck145.redhook.manager;
 
-import io.github.n1ck145.redhook.inventories.lib.Menu;
+import io.github.n1ck145.redhook.inventories.lib.InteractiveMenu;
 import io.github.n1ck145.redhook.utils.PlayerState;
 
 import org.bukkit.entity.Player;
@@ -12,12 +12,12 @@ import java.util.Map;
 import java.util.UUID;
 
 public class MenuManager {
-	private static final Map<UUID, Menu> openMenus = new HashMap<>();
+	private static final Map<UUID, InteractiveMenu> openMenus = new HashMap<>();
 
 	/**
 	 * Registers and opens a paginated menu for the given player.
 	 */
-	public static void openMenu(Player player, Menu menu) {
+	public static void openMenu(Player player, InteractiveMenu menu) {
 		openMenus.put(player.getUniqueId(), menu);
 		menu.open();
 	}
@@ -29,7 +29,7 @@ public class MenuManager {
 		if (!(event.getWhoClicked() instanceof Player player))
 			return;
 
-		Menu menu = openMenus.get(player.getUniqueId());
+		InteractiveMenu menu = openMenus.get(player.getUniqueId());
 		if (menu != null) {
 			menu.handleClick(event);
 		}
@@ -61,7 +61,7 @@ public class MenuManager {
 	/**
 	 * Gets the current menu for a player.
 	 */
-	public static Menu getCurrentMenu(Player player) {
+	public static InteractiveMenu getCurrentMenu(Player player) {
 		return openMenus.get(player.getUniqueId());
 	}
 }

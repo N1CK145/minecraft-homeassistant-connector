@@ -1,8 +1,8 @@
 package io.github.n1ck145.redhook.inventories;
 
-import io.github.n1ck145.redhook.inventories.lib.AbstractPaginatedMenu;
+import io.github.n1ck145.redhook.actions.lib.RedstoneAction;
+import io.github.n1ck145.redhook.inventories.lib.PaginatedMenu;
 import io.github.n1ck145.redhook.manager.MenuManager;
-import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneAction;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class RedstoneActionMenu extends AbstractPaginatedMenu<RedstoneAction> {
+public class RedstoneActionMenu extends PaginatedMenu<RedstoneAction> {
 	private final Block selectedBlock;
 
 	public RedstoneActionMenu(Player player, Block selectedBlock, List<RedstoneAction> actions) {

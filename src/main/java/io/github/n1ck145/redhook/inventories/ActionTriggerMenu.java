@@ -1,8 +1,5 @@
 package io.github.n1ck145.redhook.inventories;
 
-import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneAction;
-import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneActionInstance;
-import io.github.n1ck145.redhook.redstoneactions.lib.TriggerCondition;
 import io.github.n1ck145.redhook.utils.ResponseMessage;
 
 import java.util.ArrayList;
@@ -19,10 +16,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import io.github.n1ck145.redhook.RedhookPlugin;
-import io.github.n1ck145.redhook.inventories.lib.Menu;
+import io.github.n1ck145.redhook.actions.lib.RedstoneAction;
+import io.github.n1ck145.redhook.actions.lib.RedstoneActionInstance;
+import io.github.n1ck145.redhook.actions.lib.TriggerCondition;
+import io.github.n1ck145.redhook.inventories.lib.InteractiveMenu;
 import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
 
-public class ActionTriggerMenu implements Menu {
+public class ActionTriggerMenu implements InteractiveMenu {
 	private final Player player;
 	private final Block selectedBlock;
 	private final RedstoneAction action;

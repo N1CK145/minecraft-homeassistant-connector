@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneAction;
-import io.github.n1ck145.redhook.redstoneactions.lib.ValidationResult;
+import io.github.n1ck145.redhook.actions.lib.RedstoneAction;
+import io.github.n1ck145.redhook.actions.lib.ValidationResult;
 
 public class ActionRegistry {
 	private static final Map<String, RedstoneAction> actions = new HashMap<>();

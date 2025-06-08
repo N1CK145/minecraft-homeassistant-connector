@@ -1,4 +1,4 @@
-package io.github.n1ck145.redhook.redstoneactions;
+package io.github.n1ck145.redhook.actions;
 
 import java.util.List;
 
@@ -6,15 +6,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import io.github.n1ck145.redhook.annotations.ActionField;
-import io.github.n1ck145.redhook.redstoneactions.lib.AbstractRedstoneAction;
-import io.github.n1ck145.redhook.redstoneactions.lib.ActionTypeRepresentation;
+import io.github.n1ck145.redhook.actions.lib.ActionTypeRepresentation;
+import io.github.n1ck145.redhook.actions.lib.RedstoneActionBase;
+import io.github.n1ck145.redhook.annotations.ActionFieldRepresentation;
 
 @ActionTypeRepresentation(icon = Material.COMMAND_BLOCK, description = "Executes Minecraft commands when triggered by redstone. Supports all server commands and can be used to automate various game actions.")
-public class CommandAction extends AbstractRedstoneAction {
+public class CommandAction extends RedstoneActionBase {
 	private static final Material material = Material.COMMAND_BLOCK;
 
-	@ActionField(label = "Command", description = "The command to execute", icon = Material.COMMAND_BLOCK, required = true)
+	@ActionFieldRepresentation(label = "Command", description = "The command to execute", icon = Material.COMMAND_BLOCK, required = true)
 	private String command;
 
 	public CommandAction(String id, String label, List<String> description) {

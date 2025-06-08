@@ -1,8 +1,8 @@
 package io.github.n1ck145.redhook.config;
 
+import io.github.n1ck145.redhook.actions.lib.RedstoneActionInstance;
+import io.github.n1ck145.redhook.actions.lib.TriggerCondition;
 import io.github.n1ck145.redhook.manager.ActionRegistry;
-import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneActionInstance;
-import io.github.n1ck145.redhook.redstoneactions.lib.TriggerCondition;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -16,12 +16,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BindingsConfig {
+public class LinkConfig {
 	private final Plugin plugin;
 	private final File configFile;
 	private final FileConfiguration config;
 
-	public BindingsConfig(Plugin plugin, String fileName) {
+	public LinkConfig(Plugin plugin, String fileName) {
 		this.plugin = plugin;
 		this.configFile = new File(plugin.getDataFolder(), fileName);
 

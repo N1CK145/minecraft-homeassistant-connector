@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public abstract class AbstractPaginatedMenu<T> implements Menu {
+public abstract class PaginatedMenu<T> implements InteractiveMenu {
 	protected final Player player;
 	protected final List<T> entries;
 	protected final Inventory inventory;
@@ -18,7 +18,7 @@ public abstract class AbstractPaginatedMenu<T> implements Menu {
 
 	protected int currentPage = 0;
 
-	public AbstractPaginatedMenu(Player player, List<T> entries, PaginatedMenuConfiguration menuConfiguration) {
+	public PaginatedMenu(Player player, List<T> entries, PaginatedMenuConfiguration menuConfiguration) {
 		this.player = player;
 		this.entries = entries;
 		this.menuConfiguration = menuConfiguration;
@@ -26,7 +26,7 @@ public abstract class AbstractPaginatedMenu<T> implements Menu {
 		inventory = Bukkit.createInventory(player, menuConfiguration.getInventorySize(), getTitle());
 	}
 
-	public AbstractPaginatedMenu(Player player, List<T> entries) {
+	public PaginatedMenu(Player player, List<T> entries) {
 		this(player, entries, PaginatedMenuConfiguration.builder().build());
 	}
 

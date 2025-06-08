@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.bukkit.Material;
 
-import io.github.n1ck145.redhook.annotations.ActionField;
+import io.github.n1ck145.redhook.annotations.ActionFieldRepresentation;
 
-public class ActionConfigurationItem {
+public class ActionFieldConfiguration {
 	private final Material material;
 	private final String label;
 	private final List<String> description;
@@ -16,7 +16,7 @@ public class ActionConfigurationItem {
 	private Object value;
 	private boolean isRequired;
 
-	public ActionConfigurationItem(ActionField annotation, Class<?> valueType) {
+	public ActionFieldConfiguration(ActionFieldRepresentation annotation, Class<?> valueType) {
 		this.label = annotation.label();
 		this.description = Arrays.asList(annotation.description());
 		this.valueType = valueType;
@@ -83,7 +83,7 @@ public class ActionConfigurationItem {
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-		ActionConfigurationItem that = (ActionConfigurationItem) o;
+		ActionFieldConfiguration that = (ActionFieldConfiguration) o;
 		return hidden == that.hidden && isRequired == that.isRequired && material == that.material
 				&& label.equals(that.label) && description.equals(that.description) && valueType.equals(that.valueType);
 	}

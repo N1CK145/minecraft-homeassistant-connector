@@ -1,22 +1,22 @@
 package io.github.n1ck145.redhook;
 
+import io.github.n1ck145.redhook.actions.CommandAction;
+import io.github.n1ck145.redhook.actions.HttpAction;
+import io.github.n1ck145.redhook.actions.PlayerMessageAction;
+import io.github.n1ck145.redhook.actions.lib.RedstoneAction;
+import io.github.n1ck145.redhook.actions.lib.RedstoneActionType;
 import io.github.n1ck145.redhook.commands.RedhookCommand;
 import io.github.n1ck145.redhook.config.ConfigManager;
 import io.github.n1ck145.redhook.listeners.ChatInputListener;
 import io.github.n1ck145.redhook.listeners.DebugBlockBreakListener;
 import io.github.n1ck145.redhook.listeners.InventoryClickListener;
-import io.github.n1ck145.redhook.listeners.RedhookToolInteractionListener;
+import io.github.n1ck145.redhook.listeners.RedhookToolsInteractionListener;
 import io.github.n1ck145.redhook.listeners.RedstonePowerChangeListener;
 import io.github.n1ck145.redhook.listeners.DebugHologramListener;
 import io.github.n1ck145.redhook.manager.ActionFactory;
 import io.github.n1ck145.redhook.manager.ActionRegistry;
 import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
-import io.github.n1ck145.redhook.redstoneactions.CommandAction;
-import io.github.n1ck145.redhook.redstoneactions.PlayerMessageAction;
-import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneAction;
-import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneActionType;
 import io.github.n1ck145.redhook.utils.ResponseMessage;
-import io.github.n1ck145.redhook.redstoneactions.HttpAction;
 
 import java.util.List;
 
@@ -69,16 +69,16 @@ public final class RedhookPlugin extends JavaPlugin {
 	private void registerEvents() {
 		getServer().getPluginManager().registerEvents(new RedstonePowerChangeListener(), this);
 		getServer().getPluginManager().registerEvents(new InventoryClickListener(), this);
-		getServer().getPluginManager().registerEvents(new RedhookToolInteractionListener(), this);
+		getServer().getPluginManager().registerEvents(new RedhookToolsInteractionListener(), this);
 		getServer().getPluginManager().registerEvents(new DebugBlockBreakListener(), this);
 		getServer().getPluginManager().registerEvents(new DebugHologramListener(), this);
 		getServer().getPluginManager().registerEvents(new ChatInputListener(), this);
 	}
 
 	private void registerActionTypes() {
-		ActionFactory.register(PlayerMessageAction.class);
-		ActionFactory.register(HttpAction.class);
-		ActionFactory.register(CommandAction.class);
+		ActionFactory.registerType(PlayerMessageAction.class);
+		ActionFactory.registerType(HttpAction.class);
+		ActionFactory.registerType(CommandAction.class);
 	}
 
 	private void loadConfigs() {

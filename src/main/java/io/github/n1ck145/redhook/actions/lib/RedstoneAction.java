@@ -1,6 +1,6 @@
-package io.github.n1ck145.redhook.redstoneactions.lib;
+package io.github.n1ck145.redhook.actions.lib;
 
-import io.github.n1ck145.redhook.lib.ActionConfigurationItem;
+import io.github.n1ck145.redhook.lib.ActionFieldConfiguration;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -17,7 +17,7 @@ public interface RedstoneAction {
 
 	ItemStack getIcon();
 
-	Map<ActionConfigurationItem, Field> getConfigurationItems();
+	Map<ActionFieldConfiguration, Field> getConfigurationItems();
 
 	void execute(Player trigger);
 

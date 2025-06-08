@@ -1,4 +1,4 @@
-package io.github.n1ck145.redhook.redstoneactions.lib;
+package io.github.n1ck145.redhook.actions.lib;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

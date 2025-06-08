@@ -1,8 +1,8 @@
 package io.github.n1ck145.redhook.config;
 
+import io.github.n1ck145.redhook.actions.lib.RedstoneAction;
 import io.github.n1ck145.redhook.manager.ActionFactory;
 import io.github.n1ck145.redhook.manager.ActionRegistry;
-import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneAction;
 import io.github.n1ck145.redhook.utils.ResponseMessage;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -13,13 +13,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class ActionsConfig {
+public class ActionConfig {
 
 	private final Plugin plugin;
 	private final File configFile;
 	private final FileConfiguration config;
 
-	public ActionsConfig(Plugin plugin, String fileName) {
+	public ActionConfig(Plugin plugin, String fileName) {
 		this.plugin = plugin;
 		this.configFile = new File(plugin.getDataFolder(), fileName);
 
@@ -33,7 +33,7 @@ public class ActionsConfig {
 		List<Map<?, ?>> list = config.getMapList("actions");
 
 		for (Map<?, ?> map : list) {
-			RedstoneAction action = ActionFactory.create(map);
+			RedstoneAction action = ActionFactory.createAction(map);
 
 			if (action != null) {
 				try {
