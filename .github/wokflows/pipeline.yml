@@ -46,23 +46,3 @@ jobs:
           files: "*.jar"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  # build-mkdocs:
-  #   name: Build and Deploy MkDocs
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
-
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: '3.11'
-
-  #     - name: Install Material for MkDocs
-  #       run: |
-  #         pip install mkdocs-material
-
-  #     - name: Deploy to GitHub Pages
-  #       run: mkdocs gh-deploy --force

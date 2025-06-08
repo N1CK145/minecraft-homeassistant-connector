@@ -50,20 +50,7 @@ public abstract class AbstractPaginatedMenu<T> implements Menu {
 
 		ItemStack background = new ItemBuilder(material).name(" ").build();
 
-		// Add top border
-		for (int i = 0; i < 9; i++) {
-			inventory.setItem(i, background);
-		}
-
-		// Add side borders
-		for (int i = 9; i < menuConfiguration.getInventorySize() - 9; i++) {
-			if (i % 9 == 0 || i % 9 == 8) {
-				inventory.setItem(i, background);
-			}
-		}
-
-		// Add bottom border
-		for (int i = menuConfiguration.getInventorySize() - 9; i < menuConfiguration.getInventorySize(); i++) {
+		for (int i = 0; i < menuConfiguration.getInventorySize(); i++) {
 			inventory.setItem(i, background);
 		}
 	}

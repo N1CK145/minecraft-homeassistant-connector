@@ -2,7 +2,6 @@ package io.github.n1ck145.redhook.config;
 
 import io.github.n1ck145.redhook.manager.ActionFactory;
 import io.github.n1ck145.redhook.manager.ActionRegistry;
-import io.github.n1ck145.redhook.redstoneactions.PlayerMessageAction;
 import io.github.n1ck145.redhook.redstoneactions.lib.RedstoneAction;
 import io.github.n1ck145.redhook.utils.ResponseMessage;
 

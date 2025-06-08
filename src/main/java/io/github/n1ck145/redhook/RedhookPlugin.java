@@ -31,8 +31,8 @@ public final class RedhookPlugin extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		registerEvents();
 		registerActionTypes();
+		registerEvents();
 		loadConfigs();
 
 		RedstoneLinkManager.initialize(this);
@@ -82,7 +82,7 @@ public final class RedhookPlugin extends JavaPlugin {
 	}
 
 	private void loadConfigs() {
-		ConfigManager configManager = new ConfigManager(this);
+		ConfigManager configManager = ConfigManager.getInstance();
 
 		configManager.getActionsConfig().loadActions();
 	}
@@ -93,7 +93,7 @@ public final class RedhookPlugin extends JavaPlugin {
 		ActionRegistry.clear();
 		RedstoneLinkManager.clear();
 
-		ConfigManager configManager = new ConfigManager(this);
+		ConfigManager configManager = ConfigManager.getInstance();
 		ResponseMessage actionMessage = configManager.getActionsConfig().loadActions();
 
 		if (!actionMessage.isSuccess()) {

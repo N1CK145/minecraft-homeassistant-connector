@@ -2,6 +2,7 @@ package io.github.n1ck145.redhook.inventories;
 
 import io.github.n1ck145.redhook.RedhookPlugin;
 import io.github.n1ck145.redhook.config.ActionsConfig;
+import io.github.n1ck145.redhook.config.ConfigManager;
 import io.github.n1ck145.redhook.inventories.lib.AbstractPaginatedMenu;
 import io.github.n1ck145.redhook.lib.ActionConfigurationItem;
 import io.github.n1ck145.redhook.manager.ActionFactory;
@@ -206,6 +207,6 @@ public class CreateActionMenu extends AbstractPaginatedMenu<ActionConfigurationI
 		PlayerStateManager.removePlayerState(player, PlayerState.REDHOOK_PERSIST_INVENTORY_STATE);
 		player.closeInventory();
 
-		RedhookPlugin.getInstance().saveConfig();
+		ConfigManager.getInstance().getActionsConfig().saveActions();
 	}
 }
