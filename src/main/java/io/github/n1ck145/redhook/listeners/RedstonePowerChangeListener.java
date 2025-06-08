@@ -1,10 +1,11 @@
 package io.github.n1ck145.redhook.listeners;
 
-import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockRedstoneEvent;
+
+import io.github.n1ck145.redhook.manager.action.RedstoneLinkManager;
 
 public class RedstonePowerChangeListener implements Listener {
 	@EventHandler

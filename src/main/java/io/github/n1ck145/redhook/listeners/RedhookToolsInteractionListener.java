@@ -1,10 +1,10 @@
 package io.github.n1ck145.redhook.listeners;
 
-import io.github.n1ck145.redhook.inventories.ActionTypeMenu;
-import io.github.n1ck145.redhook.inventories.RedstoneActionMenu;
-import io.github.n1ck145.redhook.manager.ActionRegistry;
-import io.github.n1ck145.redhook.manager.MenuManager;
-import io.github.n1ck145.redhook.utils.ItemUtils;
+import io.github.n1ck145.redhook.implementation.menu.ActionTypeMenu;
+import io.github.n1ck145.redhook.implementation.menu.RedstoneActionMenu;
+import io.github.n1ck145.redhook.manager.action.ActionRegistry;
+import io.github.n1ck145.redhook.manager.menu.MenuManager;
+import io.github.n1ck145.redhook.util.ItemUtils;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;

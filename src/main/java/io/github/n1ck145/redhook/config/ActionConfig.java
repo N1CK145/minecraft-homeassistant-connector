@@ -1,9 +1,9 @@
 package io.github.n1ck145.redhook.config;
 
-import io.github.n1ck145.redhook.actions.lib.RedstoneAction;
-import io.github.n1ck145.redhook.manager.ActionFactory;
-import io.github.n1ck145.redhook.manager.ActionRegistry;
-import io.github.n1ck145.redhook.utils.ResponseMessage;
+import io.github.n1ck145.redhook.api.action.RedstoneAction;
+import io.github.n1ck145.redhook.manager.action.ActionFactory;
+import io.github.n1ck145.redhook.manager.action.ActionRegistry;
+import io.github.n1ck145.redhook.util.ResponseMessage;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

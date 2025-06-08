@@ -15,10 +15,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import io.github.n1ck145.redhook.RedhookPlugin;
-import io.github.n1ck145.redhook.actions.lib.RedstoneActionInstance;
-import io.github.n1ck145.redhook.manager.RedstoneLinkManager;
-import io.github.n1ck145.redhook.utils.ItemUtils;
-import io.github.n1ck145.redhook.utils.StateColor;
+import io.github.n1ck145.redhook.constants.TriggerCondition;
+import io.github.n1ck145.redhook.manager.action.RedstoneLinkManager;
+import io.github.n1ck145.redhook.model.action.RedstoneActionInstance;
+import io.github.n1ck145.redhook.util.ItemUtils;
 
 public class DebugBlockBreakListener implements Listener {
 
@@ -74,7 +74,7 @@ public class DebugBlockBreakListener implements Listener {
 		player.sendMessage(RedhookPlugin.getPrefix() + "Total Actions: §7" + instances.size());
 
 		for (RedstoneActionInstance instance : instances) {
-			String colorCode = StateColor.valueOf(instance.getTriggerCondition().name()).getColorCode();
+			String colorCode = TriggerCondition.valueOf(instance.getTriggerCondition().name()).getColorCode();
 
 			Map<String, Object> actionData = instance.getAction().serialize();
 			actionData.remove("id");
